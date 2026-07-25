@@ -1,5 +1,18 @@
 import si from 'systeminformation'
 
+const SI_TIMEOUT = 15000
+
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error(`Timeout after ${ms}ms: ${label}`))
+    }, ms)
+    promise
+      .then((val) => { clearTimeout(timer); resolve(val) })
+      .catch((err) => { clearTimeout(timer); reject(err) })
+  })
+}
+
 export interface CPUDetail {
   manufacturer: string
   brand: string
@@ -40,9 +53,9 @@ export interface GPUDetail {
 
 export async function getCPUDetail(): Promise<CPUDetail> {
   const [cpu, currentLoad, cpuTemp] = await Promise.allSettled([
-    si.cpu(),
-    si.currentLoad(),
-    si.cpuTemperature()
+    withTimeout(si.cpu(), SI_TIMEOUT, 'cpu'),
+    withTimeout(si.currentLoad(), SI_TIMEOUT, 'currentLoad'),
+    withTimeout(si.cpuTemperature(), SI_TIMEOUT, 'cpuTemperature')
   ])
 
   const cpuVal = cpu.status === 'fulfilled' ? cpu.value : { manufacturer: '', brand: '', cores: 0, physicalCores: 0, speed: 0, speedMax: 0, voltage: null }
@@ -64,8 +77,8 @@ export async function getCPUDetail(): Promise<CPUDetail> {
 
 export async function getRAMDetail(): Promise<RAMDetail> {
   const [mem, memLayout] = await Promise.allSettled([
-    si.mem(),
-    si.memLayout()
+    withTimeout(si.mem(), SI_TIMEOUT, 'mem'),
+    withTimeout(si.memLayout(), SI_TIMEOUT, 'memLayout')
   ])
 
   const memVal = mem.status === 'fulfilled' ? mem.value : { total: 1, used: 0, available: 0 }
@@ -90,7 +103,7 @@ export async function getRAMDetail(): Promise<RAMDetail> {
 }
 
 export async function getGPUDetail(): Promise<GPUDetail> {
-  const graphics = await si.graphics().catch(() => ({ controllers: [] }))
+  const graphics = await withTimeout(si.graphics(), SI_TIMEOUT, 'graphics').catch(() => ({ controllers: [] }))
 
   if (!graphics.controllers || graphics.controllers.length === 0) {
     return {

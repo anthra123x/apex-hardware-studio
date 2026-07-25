@@ -2,7 +2,7 @@ import si from 'systeminformation'
 import { getBatteryInfo } from './battery.service'
 import { cached } from './service-cache'
 
-const SI_TIMEOUT = 3000
+const SI_TIMEOUT = 5000
 
 let isFetching = false
 
@@ -52,7 +52,7 @@ async function fetchLiveMetrics(): Promise<LiveMetrics> {
       withTimeout(si.cpu(), SI_TIMEOUT, 'cpu'),
       withTimeout(si.fsSize(), SI_TIMEOUT, 'fsSize'),
       getBatteryInfo(),
-      withTimeout(si.time(), SI_TIMEOUT, 'time'),
+      Promise.resolve(si.time()),
     ])
 
     const cl = currentLoad.status === 'fulfilled' ? currentLoad.value : null

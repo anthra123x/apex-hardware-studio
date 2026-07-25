@@ -1,7 +1,7 @@
 import { create } from 'zustand'
-import type { Diagnostic, DiagnosticResult, AutoDiagnosticPhase, SystemInfo } from '../../../shared/types/diagnostic.types'
+import type { Diagnostic, DiagnosticResult, AutoDiagnosticPhase } from '../../../shared/types/diagnostic.types'
 import type { TestStatus, DiagnosticStatus } from '../../../shared/types/diagnostic.types'
-import type { CPUInfo, RAMInfo, GPUInfo, StorageInfo, BatteryInfo, SensorInfo, WifiInfo } from '../../../shared/types/hardware.types'
+import type { SystemInfo, CPUInfo, RAMInfo, GPUInfo, StorageInfo, BatteryInfo, SensorInfo, WifiInfo } from '../../../shared/types/hardware.types'
 
 export interface FullSystemSpecs {
   cpu: CPUInfo | null

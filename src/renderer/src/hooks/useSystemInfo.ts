@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useIpc } from './useIpc'
 import { useDiagnosticStore } from '../stores/diagnostic.store'
 import { IPC_CHANNELS } from '../../../shared/constants/ipc-channels'
-import type { SystemInfo } from '../../../shared/types/diagnostic.types'
+import type { SystemInfo } from '../../../shared/types/hardware.types'
 
 export function useSystemInfo() {
   const [loading, setLoading] = useState(true)
@@ -16,12 +16,11 @@ export function useSystemInfo() {
     setLoading(true)
     setError(null)
     try {
-      const [info, specs] = await Promise.all([
-        invoke<SystemInfo | null>(IPC_CHANNELS.GET_SYSTEM_INFO),
-        invoke<unknown>(IPC_CHANNELS.GET_SYSTEM_SPECS).catch(() => null),
-      ])
+      const info = await invoke(IPC_CHANNELS.GET_SYSTEM_INFO) as SystemInfo | null
       if (info) setSystemInfo(info)
-      if (specs) setSystemSpecs(specs)
+      setTimeout(() => {
+        invoke(IPC_CHANNELS.GET_SYSTEM_SPECS).then(s => s && setSystemSpecs(s as any)).catch(() => {})
+      }, 100)
     } catch (err: any) {
       setError(err?.message || 'Error obteniendo información del sistema')
     } finally {
@@ -31,7 +30,7 @@ export function useSystemInfo() {
 
   const loadSpecs = useCallback(async () => {
     try {
-      const specs = await invoke(IPC_CHANNELS.GET_SYSTEM_SPECS)
+      const specs = await invoke(IPC_CHANNELS.GET_SYSTEM_SPECS) as any
       if (specs) setSystemSpecs(specs)
     } catch {
       // best-effort
@@ -41,11 +40,6 @@ export function useSystemInfo() {
   useEffect(() => {
     if (!systemInfo) {
       refresh()
-    } else {
-      setLoading(false)
-      if (!useDiagnosticStore.getState().systemSpecs) {
-        loadSpecs()
-      }
     }
   }, [])
 

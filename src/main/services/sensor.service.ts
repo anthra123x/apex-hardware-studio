@@ -3,7 +3,7 @@ import { runPowerShell } from './powershell'
 import { cached } from './service-cache'
 
 const PS_TIMEOUT = 5000
-const SI_TIMEOUT = 8000
+const SI_TIMEOUT = 15000
 
 function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
   return Promise.race([

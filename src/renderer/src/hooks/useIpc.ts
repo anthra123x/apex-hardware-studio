@@ -1,7 +1,13 @@
 import { useRef, useMemo } from 'react'
 
+interface ElectronApi {
+  invoke: (channel: string, ...args: unknown[]) => Promise<unknown>
+  on: (channel: string, callback: (...args: unknown[]) => void) => void
+  send: (channel: string, ...args: unknown[]) => void
+}
+
 export function useIpc() {
-  const apiRef = useRef((window as any).api)
+  const apiRef = useRef<ElectronApi>((window as any).api)
 
   return useMemo(() => ({
     invoke: apiRef.current.invoke.bind(apiRef.current),

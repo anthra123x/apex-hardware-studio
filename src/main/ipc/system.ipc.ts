@@ -8,7 +8,7 @@ import { getBatteryInfo } from '../services/battery.service'
 import { getSensorInfo } from '../services/sensor.service'
 import type { CPUInfo, RAMInfo, GPUInfo, OSInfo, MotherboardInfo, SystemInfo, StorageInfo, BatteryInfo, SensorInfo, WifiInfo } from '../../shared/types/hardware.types'
 
-const IPC_TIMEOUT = 10000
+const IPC_TIMEOUT = 15000
 
 function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
   return Promise.race([
@@ -37,11 +37,14 @@ export function registerSystemIpcHandlers(): void {
     sensors: SensorInfo | null
     wifi: WifiInfo | null
   }> => {
-    const [cpu, ram, gpu, storage, battery, sensors, wifi] = await Promise.allSettled([
+    const [cpu, ram, gpu, storage] = await Promise.allSettled([
       getCPUInfo(),
       getRAMInfo(),
       getGPUInfo(),
       getStorageInfo(),
+    ])
+
+    const [battery, sensors, wifi] = await Promise.allSettled([
       getBatteryInfo(),
       getSensorInfo(),
       getWifiInfo(),
@@ -51,7 +54,7 @@ export function registerSystemIpcHandlers(): void {
       cpu: cpu.status === 'fulfilled' ? cpu.value : null,
       ram: ram.status === 'fulfilled' ? ram.value : null,
       gpu: gpu.status === 'fulfilled' ? gpu.value : null,
-      storage: storage.status === 'fulfilled' ? storage.value : [],
+      storage: storage.status === 'fulfilled' ? storage.value as any : [],
       battery: battery.status === 'fulfilled' ? battery.value : null,
       sensors: sensors.status === 'fulfilled' ? sensors.value : null,
       wifi: wifi.status === 'fulfilled' ? wifi.value : null,

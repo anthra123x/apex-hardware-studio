@@ -2,7 +2,7 @@ import si from 'systeminformation'
 import { runPowerShellWithRetry } from './powershell'
 import { cached } from './service-cache'
 
-const SI_TIMEOUT = 8000
+const SI_TIMEOUT = 15000
 const PS_TIMEOUT = 5000
 
 function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {

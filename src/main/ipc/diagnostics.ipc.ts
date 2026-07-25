@@ -7,7 +7,7 @@ import { getBatteryInfo } from '../services/battery.service'
 import { getSensorInfo } from '../services/sensor.service'
 import { runPowerShellWithRetry } from '../services/powershell'
 
-const DIAG_TIMEOUT = 10000
+const DIAG_TIMEOUT = 15000
 
 function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
   return Promise.race([

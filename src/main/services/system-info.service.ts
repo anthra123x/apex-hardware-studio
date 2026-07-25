@@ -3,7 +3,7 @@ import { runPowerShellWithRetry } from './powershell'
 import { cached } from './service-cache'
 import type { SystemInfo, CPUInfo, RAMInfo, GPUInfo, MotherboardInfo, RAMSlot } from '../../shared/types/hardware.types'
 
-const SI_TIMEOUT = 8000
+const SI_TIMEOUT = 15000
 
 function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
   return Promise.race([
@@ -29,7 +29,7 @@ async function getOSWindowsEdition(): Promise<string | null> {
   )
 }
 
-async function isSecureBootEnabled(): Promise<boolean | null> {
+export async function isSecureBootEnabled(): Promise<boolean | null> {
   try {
     const result = await runPowerShellWithRetry<string>(
       'Confirm-SecureBootUEFI -ErrorAction SilentlyContinue; if ($?) { $r = $LASTEXITCODE; Write-Output $r } else { Write-Output "null" }',
@@ -41,7 +41,7 @@ async function isSecureBootEnabled(): Promise<boolean | null> {
   } catch { return null }
 }
 
-async function getTPMInfo(): Promise<{ present: boolean; version: string | null; enabled: boolean | null } | null> {
+export async function getTPMInfo(): Promise<{ present: boolean; version: string | null; enabled: boolean | null } | null> {
   return runPowerShellWithRetry<{ present: boolean; version: string | null; enabled: boolean | null }>(
     `$tpm = Get-CimInstance -Namespace root/cimv2/Security/MicrosoftTpm -ClassName Win32_Tpm -ErrorAction SilentlyContinue
      if (-not $tpm) { return "{""present"": false}" }
@@ -52,10 +52,11 @@ async function getTPMInfo(): Promise<{ present: boolean; version: string | null;
   )
 }
 
-async function getVirtualizationInfo(): Promise<{ supported: boolean | null; enabled: boolean | null; hypervisorPresent: boolean | null }> {
+export async function getVirtualizationInfo(): Promise<{ supported: boolean | null; enabled: boolean | null; hypervisorPresent: boolean | null }> {
   try {
-    const cpu = await si.cpu()
-    const hasVirt = cpu.virtualization || (cpu.flags?.some(f => ['vmx', 'svm'].includes(f.toLowerCase())) ?? false)
+    const cpu = await withTimeout(si.cpu(), SI_TIMEOUT, 'cpu').catch(() => ({ virtualization: false, flags: [] }))
+    const flags = typeof cpu.flags === 'string' ? cpu.flags : (Array.isArray(cpu.flags) ? cpu.flags.join(' ') : '')
+    const hasVirt = cpu.virtualization || /\b(vmx|svm)\b/i.test(flags)
     const [hvResult, enabledResult] = await Promise.allSettled([
       runPowerShellWithRetry<string>(
         'Get-CimInstance Win32_ComputerSystem -ErrorAction SilentlyContinue | Select-Object -ExpandProperty HypervisorPresent',
@@ -78,7 +79,7 @@ async function getVirtualizationInfo(): Promise<{ supported: boolean | null; ena
   }
 }
 
-async function getPowerPlan(): Promise<string | null> {
+export async function getPowerPlan(): Promise<string | null> {
   return runPowerShellWithRetry<string>(
     'powercfg /getactivescheme | Select-String -Pattern "\\{[a-f0-9-]+\\}" | ForEach-Object { $_.Matches[0].Value }',
     (r) => {
@@ -94,9 +95,12 @@ async function getPowerPlan(): Promise<string | null> {
   )
 }
 
-async function getUptime(): Promise<{ seconds: number; days: number; hours: number; minutes: number }> {
-  const time = await si.time()
-  const uptimeSec = time.uptime ?? 0
+export async function getUptime(): Promise<{ seconds: number; days: number; hours: number; minutes: number }> {
+  let uptimeSec = 0
+  try {
+    const time = si.time()
+    uptimeSec = time?.uptime ?? 0
+  } catch { /* ignore */ }
   return {
     seconds: uptimeSec,
     days: Math.floor(uptimeSec / 86400),
@@ -142,7 +146,7 @@ async function fetchSystemInfo(): Promise<SystemInfo> {
       edition: edition.status === 'fulfilled' ? edition.value : null,
       secureBoot: secureBoot.status === 'fulfilled' ? secureBoot.value : null,
       tpm: tpm.status === 'fulfilled' ? tpm.value : null,
-      virtualization: virt.status === 'fulfilled' ? virt.value : null,
+      virtualization: virt.status === 'fulfilled' ? virt.value : { supported: null, enabled: null, hypervisorPresent: null },
       powerPlan: powerPlan.status === 'fulfilled' ? powerPlan.value : null,
       uptime: uptime.status === 'fulfilled' ? uptime.value : { seconds: 0, days: 0, hours: 0, minutes: 0 }
     }
@@ -155,8 +159,8 @@ export async function getSystemInfo(): Promise<SystemInfo> {
 
 export async function getMotherboardInfo(): Promise<MotherboardInfo> {
   const [system, bios] = await Promise.allSettled([
-    si.system(),
-    si.bios()
+    withTimeout(si.system(), SI_TIMEOUT, 'system'),
+    withTimeout(si.bios(), SI_TIMEOUT, 'bios')
   ])
 
   const sys = system.status === 'fulfilled' ? system.value : { manufacturer: '', model: '', version: '', serial: '' }
@@ -184,7 +188,7 @@ async function fetchCPUInfo(): Promise<CPUInfo> {
   let temp: number | null = null
   let coreTemps: number[] = []
   try {
-    const temps = await si.cpuTemperature()
+    const temps = await withTimeout(si.cpuTemperature(), SI_TIMEOUT, 'cpuTemperature').catch(() => ({ main: null, cores: [] }))
     temp = temps.main ?? null
     coreTemps = temps.cores ?? []
   } catch { }
