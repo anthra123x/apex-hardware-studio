@@ -50,13 +50,17 @@ $errorCodes[48] = "Software bloqueó"
 $errorCodes[49] = "No puede iniciar por política"
 
 $drivers = Get-CimInstance Win32_PnPSignedDriver -ErrorAction SilentlyContinue | Where-Object { $_.DeviceName -ne $null } | Select-Object DeviceName, DriverVersion, DriverDate, DriverProviderName, HardwareID, IsSigned, Signer, DeviceClass, DeviceID
-$entities = Get-CimInstance Win32_PnPEntity -ErrorAction SilentlyContinue | Select-Object Name, ConfigManagerErrorCode, DeviceID
+$entityMap = @{}
+Get-CimInstance Win32_PnPEntity -ErrorAction SilentlyContinue | ForEach-Object {
+  if ($_.DeviceID) { $entityMap[$_.DeviceID] = $_.ConfigManagerErrorCode }
+}
 
 $result = @()
 foreach ($driver in $drivers) {
   $errorCode = 0
-  $entity = $entities | Where-Object { $_.DeviceID -eq $driver.DeviceID } | Select-Object -First 1
-  if ($entity -and $entity.ConfigManagerErrorCode -ne $null) { $errorCode = [int]$entity.ConfigManagerErrorCode }
+  if ($driver.DeviceID -and $entityMap.ContainsKey($driver.DeviceID) -and $entityMap[$driver.DeviceID] -ne $null) {
+    $errorCode = [int]$entityMap[$driver.DeviceID]
+  }
 
   $driverDateStr = ""
   if ($driver.DriverDate) {
@@ -168,7 +172,7 @@ try {
   Write-Output "DOWNLOADING:Descargando controladores..."
   $DownloadResult = $UpdateDownloader.Download()
 
-  if ($DownloadResult.ResultCode -eq 2 -or $DownloadResult.ResultCode -eq 3) {
+  if ($DownloadResult.ResultCode -eq 4 -or $DownloadResult.ResultCode -eq 5) {
     Write-Output "ERROR:Falló la descarga (código $($DownloadResult.ResultCode))"
     exit 1
   }
@@ -181,7 +185,7 @@ try {
   $needsReboot = $false
   if ($InstallResult.RebootRequired) { $needsReboot = $true }
 
-  if ($InstallResult.ResultCode -eq 2 -or $InstallResult.ResultCode -eq 3) {
+  if ($InstallResult.ResultCode -eq 4 -or $InstallResult.ResultCode -eq 5) {
     Write-Output "ERROR:Falló la instalación (código $($InstallResult.ResultCode))"
     exit 1
   }
@@ -193,6 +197,7 @@ try {
   }
 } catch {
   Write-Output "ERROR:$($_.Exception.Message)"
+
   exit 1
 }
 `

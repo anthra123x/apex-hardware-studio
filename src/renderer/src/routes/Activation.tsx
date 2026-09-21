@@ -38,7 +38,7 @@ function WindowsCard({
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-xl border border-neutral-200/60 overflow-hidden shadow-sm"
+      className="bg-white dark:bg-slate-900 rounded-xl border border-neutral-200/60 dark:border-slate-800 overflow-hidden shadow-sm"
     >
       <div className="p-6">
         <div className="flex items-start justify-between mb-5">
@@ -50,13 +50,13 @@ function WindowsCard({
               }
             </div>
             <div>
-              <h3 className="font-bold text-primary-900">Windows</h3>
-              <p className="text-xs text-neutral-500">Estado de activación</p>
+              <h3 className="font-bold text-primary-900 dark:text-slate-100">Windows</h3>
+              <p className="text-xs text-neutral-500 dark:text-slate-400">Estado de activación</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             {loading || refreshing ? (
-              <Loader2 className="w-5 h-5 animate-spin text-neutral-400" />
+              <Loader2 className="w-5 h-5 animate-spin text-neutral-400 dark:text-slate-500" />
             ) : (
               <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
                 isActivated ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger'
@@ -85,7 +85,7 @@ function WindowsCard({
         )}
 
         {!loading && !refreshing && !status && (
-          <p className="text-sm text-neutral-400 italic">No se pudo obtener información de activación.</p>
+          <p className="text-sm text-neutral-400 dark:text-slate-500 italic">No se pudo obtener información de activación.</p>
         )}
 
         {refreshing && (
@@ -100,7 +100,7 @@ function WindowsCard({
         <button
           onClick={onRefresh}
           disabled={loading || refreshing}
-          className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-neutral-500 hover:text-primary-600 hover:bg-primary-50 border border-neutral-200 transition-colors disabled:opacity-50"
+          className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-neutral-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-slate-800 border border-neutral-200 dark:border-slate-700 transition-colors disabled:opacity-50"
           title="Refrescar estado"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
@@ -141,30 +141,30 @@ function OfficeCard({
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-xl border border-neutral-200/60 overflow-hidden shadow-sm opacity-60"
+        className="bg-white dark:bg-slate-900 rounded-xl border border-neutral-200/60 dark:border-slate-800 overflow-hidden shadow-sm opacity-60"
       >
         <div className="p-6">
           <div className="flex items-start justify-between mb-5">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-neutral-100">
-                <ShieldCheck className="w-5 h-5 text-neutral-400" />
+              <div className="p-2.5 rounded-xl bg-neutral-100 dark:bg-slate-800">
+                <ShieldCheck className="w-5 h-5 text-neutral-400 dark:text-slate-500" />
               </div>
               <div>
-                <h3 className="font-bold text-primary-900">Microsoft Office</h3>
-                <p className="text-xs text-neutral-500">Estado de activación</p>
+                <h3 className="font-bold text-primary-900 dark:text-slate-100">Microsoft Office</h3>
+                <p className="text-xs text-neutral-500 dark:text-slate-400">Estado de activación</p>
               </div>
             </div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-neutral-100 text-neutral-500">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-neutral-100 dark:bg-slate-800 text-neutral-500 dark:text-slate-400">
               No instalado
             </span>
           </div>
-          <p className="text-sm text-neutral-400 italic">No se detectó una instalación de Office.</p>
+          <p className="text-sm text-neutral-400 dark:text-slate-500 italic">No se detectó una instalación de Office.</p>
         </div>
         <div className="px-6 pb-6">
           <button
             onClick={onRefresh}
             disabled={loading || refreshing}
-            className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-neutral-500 hover:text-primary-600 hover:bg-primary-50 border border-neutral-200 transition-colors disabled:opacity-50"
+            className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-neutral-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-slate-800 border border-neutral-200 dark:border-slate-700 transition-colors disabled:opacity-50"
             title="Refrescar estado"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
@@ -181,7 +181,7 @@ function OfficeCard({
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-xl border border-neutral-200/60 overflow-hidden shadow-sm"
+      className="bg-white dark:bg-slate-900 rounded-xl border border-neutral-200/60 dark:border-slate-800 overflow-hidden shadow-sm"
     >
       <div className="p-6">
         <div className="flex items-start justify-between mb-5">
@@ -193,13 +193,13 @@ function OfficeCard({
               }
             </div>
             <div>
-              <h3 className="font-bold text-primary-900">Microsoft Office</h3>
-              <p className="text-xs text-neutral-500">Estado de activación</p>
+              <h3 className="font-bold text-primary-900 dark:text-slate-100">Microsoft Office</h3>
+              <p className="text-xs text-neutral-500 dark:text-slate-400">Estado de activación</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             {loading || refreshing ? (
-              <Loader2 className="w-5 h-5 animate-spin text-neutral-400" />
+              <Loader2 className="w-5 h-5 animate-spin text-neutral-400 dark:text-slate-500" />
             ) : (
               <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
                 isActivated ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'
@@ -231,7 +231,7 @@ function OfficeCard({
         <button
           onClick={onRefresh}
           disabled={loading || refreshing}
-          className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-neutral-500 hover:text-primary-600 hover:bg-primary-50 border border-neutral-200 transition-colors disabled:opacity-50"
+          className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-neutral-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-slate-800 border border-neutral-200 dark:border-slate-700 transition-colors disabled:opacity-50"
           title="Refrescar estado"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
@@ -255,9 +255,9 @@ function OfficeCard({
 
 function InfoRow({ label, value, warn }: { label: string; value: string; warn?: boolean }) {
   return (
-    <div className="flex items-center justify-between py-1.5 border-b border-neutral-100 last:border-0">
-      <span className="text-xs text-neutral-500 font-medium">{label}</span>
-      <span className={`text-xs font-bold text-right max-w-[60%] truncate ${warn ? 'text-warning' : 'text-primary-800'}`}>
+    <div className="flex items-center justify-between py-1.5 border-b border-neutral-100 dark:border-slate-800 last:border-0">
+      <span className="text-xs text-neutral-500 dark:text-slate-400 font-medium">{label}</span>
+      <span className={`text-xs font-bold text-right max-w-[60%] truncate ${warn ? 'text-warning' : 'text-primary-800 dark:text-slate-200'}`}>
         {value}
       </span>
     </div>
@@ -274,12 +274,12 @@ function ProgressModal({ progress, onClose }: { progress: MASProgress | null; on
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl"
+        className="bg-white dark:bg-slate-900 border border-neutral-200/60 dark:border-slate-800 rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl"
       >
         <div className="text-center mb-4">
           {isError ? (
@@ -291,18 +291,18 @@ function ProgressModal({ progress, onClose }: { progress: MASProgress | null; on
               <CheckCircle className="w-7 h-7 text-success" />
             </div>
           ) : (
-            <div className="w-14 h-14 mx-auto rounded-full bg-primary-50 flex items-center justify-center mb-3">
+            <div className="w-14 h-14 mx-auto rounded-full bg-primary-50 dark:bg-primary-950/50 flex items-center justify-center mb-3">
               <Loader2 className="w-7 h-7 text-primary-500 animate-spin" />
             </div>
           )}
 
-          <h3 className="text-lg font-bold text-primary-900 mb-1">
+          <h3 className="text-lg font-bold text-primary-900 dark:text-slate-100 mb-1">
             {isError ? 'Error' : isComplete ? 'Completado' : 'Activando...'}
           </h3>
-          <p className="text-sm text-neutral-500">{progress.message}</p>
+          <p className="text-sm text-neutral-500 dark:text-slate-400">{progress.message}</p>
         </div>
 
-        <div className="w-full h-2 bg-neutral-100 rounded-full overflow-hidden mb-4">
+        <div className="w-full h-2 bg-neutral-100 dark:bg-slate-800 rounded-full overflow-hidden mb-4">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${progress.progress}%` }}
@@ -336,20 +336,20 @@ function DisclaimerModal({
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl"
+        className="bg-white dark:bg-slate-900 border border-neutral-200/60 dark:border-slate-800 rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl"
       >
         <div className="w-14 h-14 mx-auto rounded-full bg-warning/10 flex items-center justify-center mb-3">
           <AlertTriangle className="w-7 h-7 text-warning" />
         </div>
 
-        <h3 className="text-lg font-bold text-primary-900 mb-2 text-center">Confirmar Activación</h3>
+        <h3 className="text-lg font-bold text-primary-900 dark:text-slate-100 mb-2 text-center">Confirmar Activación</h3>
 
-        <div className="bg-neutral-50 rounded-xl p-4 mb-4 text-sm text-neutral-600 leading-relaxed space-y-2">
+        <div className="bg-neutral-50 dark:bg-slate-800/80 rounded-xl p-4 mb-4 text-sm text-neutral-600 dark:text-slate-300 leading-relaxed space-y-2">
           <p>
             Se descargará y ejecutará <strong>Microsoft Activation Scripts (MAS)</strong> de{' '}
             <a
@@ -361,12 +361,12 @@ function DisclaimerModal({
               massgrave.dev <ExternalLink className="w-3 h-3" />
             </a>
           </p>
-          <div className="flex items-start gap-2 text-xs text-neutral-500">
+          <div className="flex items-start gap-2 text-xs text-neutral-500 dark:text-slate-400">
             <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-            <span>MAS es un script open-source. El código fuente está disponible en GitHub. Se verificará la integridad del script mediante SHA256 antes de ejecutarlo.</span>
+            <span>MAS es un script open-source oficial. Se verificará la integridad del script antes de ejecutarlo.</span>
           </div>
           <p className="text-xs font-medium text-warning">
-            El script se ejecutará con permisos de administrador.{'\n'}Su antivirus puede bloquear la ejecución — es normal para este tipo de herramientas.
+            El script requiere permisos de administrador. Su antivirus podría generar un aviso previo.
           </p>
         </div>
 

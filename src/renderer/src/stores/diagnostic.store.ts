@@ -18,12 +18,21 @@ interface DiagnosticState {
   isRunning: boolean
   currentPhase: string
   phases: AutoDiagnosticPhase[]
+  manualResults: Record<string, ManualTestResult>
   systemInfo: SystemInfo | null
   systemSpecs: FullSystemSpecs | null
   specsModalOpen: boolean
+  theme: 'dark' | 'light'
+  lowSpecMode: boolean
+  technicianName: string
   setSystemInfo: (info: SystemInfo) => void
   setSystemSpecs: (specs: FullSystemSpecs) => void
   setSpecsModalOpen: (open: boolean) => void
+  setTheme: (theme: 'dark' | 'light') => void
+  setLowSpecMode: (enabled: boolean) => void
+  setTechnicianName: (name: string) => void
+  setManualTestResult: (testId: string, result: TestStatus, details?: Record<string, unknown>, observations?: string) => void
+  clearManualTests: () => void
   startDiagnostic: () => void
   updatePhase: (phaseId: string, status: TestStatus, results?: DiagnosticResult[], label?: string, description?: string) => void
   completeDiagnostic: (status: DiagnosticStatus, summary: string) => void
@@ -41,18 +50,77 @@ const initialPhases: AutoDiagnosticPhase[] = [
   { id: 'network', label: 'Red', description: 'Probando conectividad de red', status: 'PENDING', results: [] },
 ]
 
+const initialTheme: 'dark' | 'light' = (typeof window !== 'undefined' && localStorage.getItem('apex_theme') === 'light') ? 'light' : 'dark'
+const initialLowSpec: boolean = (typeof window !== 'undefined' && localStorage.getItem('apex_low_spec_mode') !== null)
+  ? localStorage.getItem('apex_low_spec_mode') === 'true'
+  : (typeof navigator !== 'undefined' && (
+      (navigator.hardwareConcurrency != null && navigator.hardwareConcurrency <= 4) ||
+      ((navigator as any).deviceMemory != null && (navigator as any).deviceMemory <= 4)
+    ))
+
+if (typeof document !== 'undefined') {
+  document.documentElement.classList.toggle('dark', initialTheme === 'dark')
+  document.documentElement.classList.toggle('low-spec', initialLowSpec)
+}
+
 export const useDiagnosticStore = create<DiagnosticState>((set) => ({
   currentDiagnostic: null,
   isRunning: false,
   currentPhase: '',
   phases: initialPhases,
+  manualResults: {},
   systemInfo: null,
   systemSpecs: null,
   specsModalOpen: false,
+  theme: initialTheme,
+  lowSpecMode: initialLowSpec,
+  technicianName: typeof window !== 'undefined' ? (localStorage.getItem('apex_technician') || '') : '',
 
   setSystemInfo: (info) => set({ systemInfo: info }),
   setSystemSpecs: (specs) => set({ systemSpecs: specs }),
   setSpecsModalOpen: (open) => set({ specsModalOpen: open }),
+
+  setTheme: (theme) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('apex_theme', theme)
+    }
+    if (typeof document !== 'undefined') {
+      document.documentElement.classList.toggle('dark', theme === 'dark')
+    }
+    set({ theme })
+  },
+
+  setLowSpecMode: (enabled) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('apex_low_spec_mode', String(enabled))
+    }
+    if (typeof document !== 'undefined') {
+      document.documentElement.classList.toggle('low-spec', enabled)
+    }
+    set({ lowSpecMode: enabled })
+  },
+
+  setTechnicianName: (name) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('apex_technician', name)
+    }
+    set({ technicianName: name })
+  },
+
+  setManualTestResult: (testId, result, details, observations) => set((state) => ({
+    manualResults: {
+      ...state.manualResults,
+      [testId]: {
+        id: testId,
+        testType: testId.toUpperCase() as any,
+        result,
+        details,
+        observations,
+      },
+    },
+  })),
+
+  clearManualTests: () => set({ manualResults: {} }),
 
   startDiagnostic: () => set({
     isRunning: true,
@@ -70,12 +138,12 @@ export const useDiagnosticStore = create<DiagnosticState>((set) => ({
 
   completeDiagnostic: (status, summary) => set((state) => {
     const allResults = state.phases.flatMap(p => p.results)
-    const manualTests = state.currentDiagnostic?.manualTests || []
+    const manualTests = Object.values(state.manualResults)
     return {
       isRunning: false,
       currentPhase: '',
       currentDiagnostic: {
-        id: crypto.randomUUID(),
+        id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `diag-${Date.now()}`,
         deviceId: state.systemInfo?.serial || '',
         startedAt: new Date().toISOString(),
         completedAt: new Date().toISOString(),

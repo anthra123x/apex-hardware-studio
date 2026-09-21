@@ -1,6 +1,6 @@
-appId: com.container.diagnosticsuite
-productName: Container Diagnostic Suite
-copyright: Copyright © 2025 Container Diagnostic Suite
+appId: com.apex.hardwarestudio
+productName: Apex Hardware Studio
+copyright: Copyright © 2026 Apex Hardware Studio
 directories:
   output: dist
 asar: true
@@ -13,4 +13,4 @@ win:
   target:
     - portable
   icon: resources/icons/icon.ico
-  artifactName: "CDS-Portable-${version}.exe"
+  artifactName: "ApexHardwareStudio-Portable-${version}.exe"

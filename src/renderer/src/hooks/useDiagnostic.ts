@@ -24,12 +24,16 @@ export function useDiagnostic() {
     st.startDiagnostic()
 
     try {
-      for (const phaseId of PHASE_IDS) {
-        st.updatePhase(phaseId, 'RUNNING')
-      }
+      const lowSpec = useDiagnosticStore.getState().lowSpecMode
+      const batchSize = lowSpec ? 1 : 2
+      const delayBetweenBatches = lowSpec ? 200 : 100
 
-      for (let i = 0; i < PHASE_IDS.length; i += BATCH_SIZE) {
-        const batch = PHASE_IDS.slice(i, i + BATCH_SIZE)
+      for (let i = 0; i < PHASE_IDS.length; i += batchSize) {
+        const batch = PHASE_IDS.slice(i, i + batchSize)
+        for (const phaseId of batch) {
+          st.updatePhase(phaseId, 'RUNNING')
+        }
+
         await Promise.all(
           batch.map((phaseId) =>
             invoke(IPC_CHANNELS.DIAGNOSTIC_RUN_PHASE, phaseId)
@@ -43,7 +47,7 @@ export function useDiagnostic() {
               })
           )
         )
-        await new Promise((r) => setTimeout(r, 100))
+        await new Promise((r) => setTimeout(r, delayBetweenBatches))
       }
 
       const currentPhases = useDiagnosticStore.getState().phases

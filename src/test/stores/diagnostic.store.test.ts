@@ -150,4 +150,48 @@ describe('diagnostic.store', () => {
       })
     })
   })
+
+  describe('manual test management', () => {
+    it('sets and clears manual test results', () => {
+      const store = useDiagnosticStore.getState()
+      store.setManualTestResult('audio', 'PASS', { channels: 'stereo' }, 'Audio L y R OK')
+      store.setManualTestResult('screen', 'WARN', { deadPixels: 1 })
+
+      let state = useDiagnosticStore.getState()
+      expect(state.manualResults['audio']).toBeDefined()
+      expect(state.manualResults['audio'].result).toBe('PASS')
+      expect(state.manualResults['screen'].result).toBe('WARN')
+
+      store.clearManualTests()
+      state = useDiagnosticStore.getState()
+      expect(Object.keys(state.manualResults)).toHaveLength(0)
+    })
+  })
+
+  describe('theme & technician', () => {
+    it('updates theme and technician name', () => {
+      const store = useDiagnosticStore.getState()
+      store.setTheme('dark')
+      expect(useDiagnosticStore.getState().theme).toBe('dark')
+
+      store.setTheme('light')
+      expect(useDiagnosticStore.getState().theme).toBe('light')
+
+      store.setTechnicianName('Alex Rodriguez')
+      expect(useDiagnosticStore.getState().technicianName).toBe('Alex Rodriguez')
+    })
+  })
+
+  describe('lowSpecMode', () => {
+    it('toggles lowSpecMode and updates localStorage', () => {
+      const store = useDiagnosticStore.getState()
+      store.setLowSpecMode(true)
+      expect(useDiagnosticStore.getState().lowSpecMode).toBe(true)
+      expect(localStorage.getItem('apex_low_spec_mode')).toBe('true')
+
+      store.setLowSpecMode(false)
+      expect(useDiagnosticStore.getState().lowSpecMode).toBe(false)
+      expect(localStorage.getItem('apex_low_spec_mode')).toBe('false')
+    })
+  })
 })

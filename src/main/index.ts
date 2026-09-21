@@ -7,6 +7,11 @@ let mainWindow: BrowserWindow | null = null
 
 app.disableHardwareAcceleration()
 
+// Memory and CPU resource optimizations for low-spec laptops
+app.commandLine.appendSwitch('disable-background-timer-throttling', 'false')
+app.commandLine.appendSwitch('renderer-process-limit', '2')
+app.commandLine.appendSwitch('js-flags', '--max-old-space-size=256')
+
 process.on('uncaughtException', (err) => {
   console.error('Uncaught exception:', err)
   if (mainWindow && !mainWindow.isDestroyed()) {
@@ -55,7 +60,7 @@ function createWindow(): void {
 
 app.whenReady().then(async () => {
   try {
-    await mkdir(join(app.getPath('temp'), 'cds-audio'), { recursive: true })
+    await mkdir(join(app.getPath('temp'), 'apex-audio'), { recursive: true })
     registerAllIpcHandlers()
     createWindow()
   } catch (err) {

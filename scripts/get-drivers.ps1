@@ -1,4 +1,4 @@
-# Container Diagnostic Suite — v2
+# Apex Hardware Studio — v2
 # Verifica estado de todos los drivers del sistema con detalle de errores
 # Uso: powershell -ExecutionPolicy Bypass -File get-drivers.ps1
 

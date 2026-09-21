@@ -29,12 +29,12 @@ function toolStatus(tool: RepairTool, progress: RepairProgress | null, running: 
     return { label: 'Completado', color: 'text-success bg-success/10', dot: 'bg-success' }
   }
   if (running && progress?.tool === tool) {
-    return { label: 'Ejecutando...', color: 'text-primary-500 bg-primary-50', dot: 'bg-primary-500 animate-pulse' }
+    return { label: 'Ejecutando...', color: 'text-primary-500 bg-primary-50 dark:bg-primary-950/50', dot: 'bg-primary-500 animate-pulse' }
   }
   if (completed[tool]) {
     return { label: 'Completado', color: 'text-success bg-success/10', dot: 'bg-success' }
   }
-  return { label: 'Sin ejecutar', color: 'text-neutral-400 bg-neutral-100', dot: 'bg-neutral-400' }
+  return { label: 'Sin ejecutar', color: 'text-neutral-400 dark:text-slate-400 bg-neutral-100 dark:bg-slate-800', dot: 'bg-neutral-400 dark:bg-slate-500' }
 }
 
 function ProgressModal({
@@ -61,12 +61,12 @@ function ProgressModal({
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-white rounded-2xl p-6 max-w-2xl w-full mx-4 shadow-xl max-h-[80vh] flex flex-col"
+        className="bg-white dark:bg-slate-900 border border-neutral-200/60 dark:border-slate-800 rounded-2xl p-6 max-w-2xl w-full mx-4 shadow-xl max-h-[80vh] flex flex-col"
       >
         <div className="text-center mb-4">
           {isError ? (
@@ -78,19 +78,19 @@ function ProgressModal({
               <CheckCircle className="w-7 h-7 text-success" />
             </div>
           ) : (
-            <div className="w-14 h-14 mx-auto rounded-full bg-primary-50 flex items-center justify-center mb-3">
+            <div className="w-14 h-14 mx-auto rounded-full bg-primary-50 dark:bg-primary-950/50 flex items-center justify-center mb-3">
               <IconComponent className="w-7 h-7 text-primary-500" />
             </div>
           )}
-          <h3 className="text-lg font-bold text-primary-900 mb-1">
+          <h3 className="text-lg font-bold text-primary-900 dark:text-slate-100 mb-1">
             {isError ? 'Error' : isComplete ? 'Completado' : REPAIR_TOOL_INFO[progress.tool]?.label || progress.tool}
           </h3>
-          <p className="text-sm text-neutral-500">{progress.message}</p>
+          <p className="text-sm text-neutral-500 dark:text-slate-400">{progress.message}</p>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto bg-neutral-900 text-green-400 rounded-xl p-4 font-mono text-xs leading-relaxed">
+        <div className="flex-1 min-h-0 overflow-y-auto bg-neutral-900 dark:bg-black/90 text-emerald-400 rounded-xl p-4 font-mono text-xs leading-relaxed border border-neutral-800">
           {progress.logLines.length === 0 ? (
-            <span className="text-neutral-500">Esperando salida...</span>
+            <span className="text-neutral-500">Esperando salida del comando del sistema...</span>
           ) : (
             progress.logLines.map((line, i) => {
               const display = line.includes('|') ? line.split('|').slice(1).join('|') : line
@@ -172,8 +172,8 @@ export function RepairTools() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-primary-900">Herramientas de Reparación</h1>
-        <p className="text-sm text-neutral-500 mt-1">
+        <h1 className="text-2xl font-extrabold text-primary-900 dark:text-slate-100">Herramientas de Reparación</h1>
+        <p className="text-sm text-neutral-500 dark:text-slate-400 mt-1">
           Utilidades del sistema para diagnosticar y reparar problemas comunes de Windows
         </p>
       </div>
@@ -188,11 +188,11 @@ export function RepairTools() {
               key={tool}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-xl border border-neutral-200/60 overflow-hidden shadow-sm flex flex-col"
+              className="bg-white dark:bg-slate-900 rounded-xl border border-neutral-200/60 dark:border-slate-800 overflow-hidden shadow-sm flex flex-col"
             >
               <div className="p-5 flex-1">
                 <div className="flex items-start justify-between mb-4">
-                  <div className="p-2.5 rounded-xl bg-primary-50">
+                  <div className="p-2.5 rounded-xl bg-primary-50 dark:bg-primary-950/50">
                     <IconComponent className="w-5 h-5 text-primary-500" />
                   </div>
                   <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${status.color}`}>
@@ -200,8 +200,8 @@ export function RepairTools() {
                     {status.label}
                   </span>
                 </div>
-                <h3 className="font-bold text-primary-900 mb-1 text-base">{info.label}</h3>
-                <p className="text-xs text-neutral-500 leading-relaxed">{info.description}</p>
+                <h3 className="font-bold text-primary-900 dark:text-slate-100 mb-1 text-base">{info.label}</h3>
+                <p className="text-xs text-neutral-500 dark:text-slate-400 leading-relaxed">{info.description}</p>
               </div>
               <div className="px-5 pb-5">
                 <Button
@@ -219,14 +219,14 @@ export function RepairTools() {
         })}
       </div>
 
-      <div className="bg-white rounded-xl border border-neutral-200/60 p-5 shadow-sm">
+      <div className="bg-white dark:bg-slate-900 rounded-xl border border-neutral-200/60 dark:border-slate-800 p-5 shadow-sm">
         <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-amber-50 shrink-0">
-            <AlertTriangle className="w-4 h-4 text-amber-600" />
+          <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/40 shrink-0">
+            <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-primary-900 mb-1">Información importante</h4>
-            <ul className="text-xs text-neutral-500 space-y-1">
+            <h4 className="text-sm font-bold text-primary-900 dark:text-slate-100 mb-1">Información importante</h4>
+            <ul className="text-xs text-neutral-500 dark:text-slate-400 space-y-1">
               <li>• Estas herramientas requieren permisos de administrador</li>
               <li>• SFC /scannow puede tardar entre 15-30 minutos en completarse</li>
               <li>• DISM /RestoreHealth requiere conexión a Internet o fuente de instalación de Windows</li>

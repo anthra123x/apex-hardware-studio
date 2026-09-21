@@ -1,4 +1,4 @@
-# Container Diagnostic Suite — v2
+# Apex Hardware Studio — v2
 # Monitoreo completo de sensores: temperaturas, ventiladores, voltajes
 # Uso: powershell -ExecutionPolicy Bypass -File get-sensors.ps1
 

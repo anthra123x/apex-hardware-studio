@@ -5,13 +5,24 @@ import { useDiagnosticStore } from '../../stores/diagnostic.store'
 import { useIpc } from '../../hooks/useIpc'
 import { IPC_CHANNELS } from '../../../../shared/constants/ipc-channels'
 
-function formatBytes(bytes: number): string {
+function formatBytes(bytes?: number): string {
   if (!bytes) return '—'
   const gb = bytes / 1073741824
   return `${gb.toFixed(2)} GB`
 }
 
-function formatVRAM(vram: number): string {
+function formatStorageSize(disk: { size?: number; sizeGB?: number }): string {
+  if (disk.sizeGB && disk.sizeGB > 0) return `${disk.sizeGB.toFixed(1)} GB`
+  if (disk.size && disk.size > 0) {
+    if (disk.size > 1000000) {
+      return `${(disk.size / 1073741824).toFixed(1)} GB`
+    }
+    return `${disk.size} GB`
+  }
+  return '—'
+}
+
+function formatVRAM(vram?: number): string {
   if (!vram) return '—'
   const gb = vram / 1073741824
   return `${gb.toFixed(1)} GB`
@@ -19,13 +30,13 @@ function formatVRAM(vram: number): string {
 
 function SpecRow({ label, value, icon }: { label: string; value: string | number | null | undefined; icon?: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between py-1.5 px-1 border-b border-primary-100/30 last:border-0 group hover:bg-white/40 transition-colors rounded">
+    <div className="flex items-center justify-between py-1.5 px-1 border-b border-primary-100/30 dark:border-slate-800/50 last:border-0 group hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors rounded">
       <div className="flex items-center gap-2 min-w-0">
-        {icon && <span className="text-primary-400/60 shrink-0">{icon}</span>}
-        <span className="text-xs text-neutral-500 uppercase tracking-wider font-medium">{label}</span>
+        {icon && <span className="text-primary-400/60 dark:text-primary-400/80 shrink-0">{icon}</span>}
+        <span className="text-xs text-neutral-500 dark:text-slate-400 uppercase tracking-wider font-medium">{label}</span>
       </div>
-      <span className="text-sm font-semibold text-primary-900 text-right max-w-[55%] truncate" title={String(value ?? '')}>
-        {value ?? <span className="text-neutral-300 italic">—</span>}
+      <span className="text-sm font-semibold text-primary-900 dark:text-slate-100 text-right max-w-[55%] truncate" title={String(value ?? '')}>
+        {value ?? <span className="text-neutral-300 dark:text-slate-600 italic">—</span>}
       </span>
     </div>
   )
@@ -38,9 +49,9 @@ function SpecSection({ title, icon, gradient, children }: { title: string; icon:
       animate={{ opacity: 1, y: 0 }}
       className={`rounded-xl p-4 border ${gradient} shadow-sm`}
     >
-      <div className="flex items-center gap-2.5 mb-3 pb-2 border-b border-white/30">
-        <div className="text-primary-600">{icon}</div>
-        <h3 className="font-bold text-primary-900 text-xs uppercase tracking-widest">{title}</h3>
+      <div className="flex items-center gap-2.5 mb-3 pb-2 border-b border-white/30 dark:border-slate-700/40">
+        <div className="text-primary-600 dark:text-primary-400">{icon}</div>
+        <h3 className="font-bold text-primary-900 dark:text-slate-200 text-xs uppercase tracking-widest">{title}</h3>
       </div>
       <div className="space-y-0.5">{children}</div>
     </motion.div>
@@ -49,12 +60,12 @@ function SpecSection({ title, icon, gradient, children }: { title: string; icon:
 
 function SkeletonSection() {
   return (
-    <div className="rounded-xl p-4 bg-neutral-50/50 border border-neutral-100 animate-pulse">
-      <div className="h-4 w-24 bg-neutral-200 rounded mb-3" />
+    <div className="rounded-xl p-4 bg-neutral-50/50 dark:bg-slate-800/50 border border-neutral-100 dark:border-slate-800 animate-pulse">
+      <div className="h-4 w-24 bg-neutral-200 dark:bg-slate-700 rounded mb-3" />
       <div className="space-y-2">
-        <div className="h-3 bg-neutral-100 rounded w-full" />
-        <div className="h-3 bg-neutral-100 rounded w-3/4" />
-        <div className="h-3 bg-neutral-100 rounded w-5/6" />
+        <div className="h-3 bg-neutral-100 dark:bg-slate-700/60 rounded w-full" />
+        <div className="h-3 bg-neutral-100 dark:bg-slate-700/60 rounded w-3/4" />
+        <div className="h-3 bg-neutral-100 dark:bg-slate-700/60 rounded w-5/6" />
       </div>
     </div>
   )
@@ -98,7 +109,7 @@ export function SystemSpecsModal() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.1 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
         onClick={() => setSpecsModalOpen(false)}
       >
         <motion.div
@@ -106,31 +117,31 @@ export function SystemSpecsModal() {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl shadow-primary-900/10 border border-neutral-200/50 max-w-3xl w-full mx-4 max-h-[85vh] overflow-hidden flex flex-col"
+          className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl shadow-2xl shadow-primary-900/10 dark:shadow-black/60 border border-neutral-200/50 dark:border-slate-800 max-w-3xl w-full mx-4 max-h-[85vh] overflow-hidden flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200/50 bg-gradient-to-r from-primary-50/50 to-white">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200/50 dark:border-slate-800 bg-gradient-to-r from-primary-50/50 to-white dark:from-slate-800/60 dark:to-slate-900">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary-500/10 rounded-lg">
-                <Info className="w-5 h-5 text-primary-600" />
+              <div className="p-2 bg-primary-500/10 dark:bg-primary-500/20 rounded-lg">
+                <Info className="w-5 h-5 text-primary-600 dark:text-primary-400" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-primary-900">Especificaciones del Equipo</h2>
-                <p className="text-xs text-neutral-500">{systemInfo?.hostname || 'Cargando...'}</p>
+                <h2 className="text-lg font-bold text-primary-900 dark:text-slate-100">Especificaciones del Equipo</h2>
+                <p className="text-xs text-neutral-500 dark:text-slate-400">{systemInfo?.hostname || 'Cargando...'}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={refreshSpecs}
                 disabled={refreshing}
-                className={`p-2 rounded-xl hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-all hover:scale-105 active:scale-95 ${refreshing ? 'animate-spin' : ''}`}
+                className={`p-2 rounded-xl hover:bg-neutral-100 dark:hover:bg-slate-800 text-neutral-400 dark:text-slate-400 hover:text-neutral-600 dark:hover:text-slate-200 transition-all hover:scale-105 active:scale-95 ${refreshing ? 'animate-spin' : ''}`}
                 title="Actualizar datos"
               >
                 <RefreshCw className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setSpecsModalOpen(false)}
-                className="p-2 rounded-xl hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-all hover:scale-105 active:scale-95"
+                className="p-2 rounded-xl hover:bg-neutral-100 dark:hover:bg-slate-800 text-neutral-400 dark:text-slate-400 hover:text-neutral-600 dark:hover:text-slate-200 transition-all hover:scale-105 active:scale-95"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -151,7 +162,7 @@ export function SystemSpecsModal() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl p-5 text-white shadow-lg shadow-primary-500/20"
+                  className="bg-gradient-to-br from-primary-600 to-primary-800 dark:from-primary-700 dark:to-primary-900 rounded-xl p-5 text-white shadow-lg shadow-primary-500/20"
                 >
                   <p className="text-2xl font-bold tracking-tight">{systemInfo?.hostname || 'Equipo'}</p>
                   <p className="text-sm text-primary-100 mt-1">
@@ -162,7 +173,7 @@ export function SystemSpecsModal() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {os && (
-                    <SpecSection title="Sistema Operativo" icon={<CircuitBoard className="w-4 h-4" />} gradient="bg-gradient-to-br from-blue-50/80 to-indigo-50/80 border-blue-100/50">
+                    <SpecSection title="Sistema Operativo" icon={<CircuitBoard className="w-4 h-4" />} gradient="bg-gradient-to-br from-blue-50/80 to-indigo-50/80 dark:from-blue-950/30 dark:to-indigo-950/20 border-blue-100/50 dark:border-blue-900/40">
                       <SpecRow label="Sistema" value={`${os.distro} ${os.release}`} />
                       <SpecRow label="Kernel" value={os.kernel} />
                       <SpecRow label="Arquitectura" value={os.arch} />
@@ -172,7 +183,7 @@ export function SystemSpecsModal() {
                   )}
 
                   {mb && (
-                    <SpecSection title="Placa Base" icon={<CircuitBoard className="w-4 h-4" />} gradient="bg-gradient-to-br from-emerald-50/80 to-teal-50/80 border-emerald-100/50">
+                    <SpecSection title="Placa Base" icon={<CircuitBoard className="w-4 h-4" />} gradient="bg-gradient-to-br from-emerald-50/80 to-teal-50/80 dark:from-emerald-950/30 dark:to-teal-950/20 border-emerald-100/50 dark:border-emerald-900/40">
                       <SpecRow label="Fabricante" value={mb.manufacturer} />
                       <SpecRow label="Modelo" value={mb.model} />
                       <SpecRow label="Versión" value={mb.version} />
@@ -185,7 +196,7 @@ export function SystemSpecsModal() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {cpu && (
-                    <SpecSection title="CPU" icon={<Cpu className="w-4 h-4" />} gradient="bg-gradient-to-br from-amber-50/80 to-orange-50/80 border-amber-100/50">
+                    <SpecSection title="CPU" icon={<Cpu className="w-4 h-4" />} gradient="bg-gradient-to-br from-amber-50/80 to-orange-50/80 dark:from-amber-950/30 dark:to-orange-950/20 border-amber-100/50 dark:border-amber-900/40">
                       <SpecRow label="Modelo" value={`${cpu.manufacturer} ${cpu.brand}`} />
                       <SpecRow label="Núcleos" value={`${cpu.physicalCores} fís / ${cpu.cores} lóg`} />
                       <SpecRow label="Velocidad" value={`${cpu.speed} GHz`} />
@@ -196,7 +207,7 @@ export function SystemSpecsModal() {
                   )}
 
                   {ram && (
-                    <SpecSection title="RAM" icon={<MemoryStick className="w-4 h-4" />} gradient="bg-gradient-to-br from-purple-50/80 to-fuchsia-50/80 border-purple-100/50">
+                    <SpecSection title="RAM" icon={<MemoryStick className="w-4 h-4" />} gradient="bg-gradient-to-br from-purple-50/80 to-fuchsia-50/80 dark:from-purple-950/30 dark:to-fuchsia-950/20 border-purple-100/50 dark:border-purple-900/40">
                       <SpecRow label="Total" value={formatBytes(ram.total)} />
                       <SpecRow label="En uso" value={formatBytes(ram.used)} />
                       <SpecRow label="Disponible" value={formatBytes(ram.free)} />
@@ -209,7 +220,7 @@ export function SystemSpecsModal() {
                 </div>
 
                 {gpu && (
-                  <SpecSection title="GPU" icon={<Monitor className="w-4 h-4" />} gradient="bg-gradient-to-br from-rose-50/80 to-pink-50/80 border-rose-100/50">
+                  <SpecSection title="GPU" icon={<Monitor className="w-4 h-4" />} gradient="bg-gradient-to-br from-rose-50/80 to-pink-50/80 dark:from-rose-950/30 dark:to-pink-950/20 border-rose-100/50 dark:border-rose-900/40">
                     <SpecRow label="Modelo" value={`${gpu.vendor} ${gpu.model}`} />
                     <SpecRow label="VRAM" value={formatVRAM(gpu.vram)} />
                     <SpecRow label="Driver" value={gpu.driverVersion} />
@@ -219,16 +230,16 @@ export function SystemSpecsModal() {
                 )}
 
                 {storage.length > 0 && (
-                  <SpecSection title="Almacenamiento" icon={<HardDrive className="w-4 h-4" />} gradient="bg-gradient-to-br from-cyan-50/80 to-sky-50/80 border-cyan-100/50">
+                  <SpecSection title="Almacenamiento" icon={<HardDrive className="w-4 h-4" />} gradient="bg-gradient-to-br from-cyan-50/80 to-sky-50/80 dark:from-cyan-950/30 dark:to-sky-950/20 border-cyan-100/50 dark:border-cyan-900/40">
                     <div className="space-y-3">
                       {storage.map((disk, i) => (
-                        <div key={i} className={`${i > 0 ? 'pt-3 border-t border-cyan-100/50' : ''}`}>
+                        <div key={i} className={`${i > 0 ? 'pt-3 border-t border-cyan-100/50 dark:border-slate-800' : ''}`}>
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="text-xs font-bold text-primary-700 uppercase tracking-wider">{disk.device}</span>
-                            {disk.isBootDrive && <span className="text-[10px] bg-primary-500/10 text-primary-600 px-1.5 py-0.5 rounded-full font-semibold">SISTEMA</span>}
-                            <span className="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded-full">{disk.type}</span>
+                            <span className="text-xs font-bold text-primary-700 dark:text-primary-300 uppercase tracking-wider">{disk.device}</span>
+                            {disk.isBootDrive && <span className="text-[10px] bg-primary-500/10 text-primary-600 dark:text-primary-400 px-1.5 py-0.5 rounded-full font-semibold">SISTEMA</span>}
+                            <span className="text-[10px] bg-neutral-100 dark:bg-slate-800 text-neutral-600 dark:text-slate-300 px-1.5 py-0.5 rounded-full">{disk.type}</span>
                           </div>
-                          <SpecRow label="Capacidad" value={formatBytes(disk.size)} />
+                          <SpecRow label="Capacidad" value={formatStorageSize(disk)} />
                           <SpecRow label="Uso" value={disk.usagePercent != null ? `${disk.usagePercent}%` : null} />
                           <SpecRow label="SMART" value={disk.smartStatus} />
                           <SpecRow label="Temperatura" value={disk.temperature != null ? `${disk.temperature}°C` : null} />
@@ -241,7 +252,7 @@ export function SystemSpecsModal() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {battery && battery.hasBattery && (
-                    <SpecSection title="Batería" icon={<Battery className="w-4 h-4" />} gradient="bg-gradient-to-br from-green-50/80 to-emerald-50/80 border-green-100/50">
+                    <SpecSection title="Batería" icon={<Battery className="w-4 h-4" />} gradient="bg-gradient-to-br from-green-50/80 to-emerald-50/80 dark:from-green-950/30 dark:to-emerald-950/20 border-green-100/50 dark:border-green-900/40">
                       <SpecRow label="Estado" value={battery.isCharging ? 'Cargando' : 'Descargando'} />
                       <SpecRow label="Capacidad diseño" value={battery.designCapacity != null ? `${battery.designCapacity} mAh` : null} />
                       <SpecRow label="Capacidad actual" value={battery.currentCapacity != null ? `${battery.currentCapacity} mAh` : null} />
@@ -253,7 +264,7 @@ export function SystemSpecsModal() {
                   )}
 
                   {wifi && (
-                    <SpecSection title="Red Wi-Fi" icon={<Wifi className="w-4 h-4" />} gradient="bg-gradient-to-br from-violet-50/80 to-purple-50/80 border-violet-100/50">
+                    <SpecSection title="Red Wi-Fi" icon={<Wifi className="w-4 h-4" />} gradient="bg-gradient-to-br from-violet-50/80 to-purple-50/80 dark:from-violet-950/30 dark:to-purple-950/20 border-violet-100/50 dark:border-violet-900/40">
                       {wifi.interfaces?.length > 0 ? (
                         wifi.interfaces.map((iface, i) => (
                           <div key={i}>
@@ -276,31 +287,31 @@ export function SystemSpecsModal() {
                 </div>
 
                 {sensors && (
-                  <SpecSection title="Sensores" icon={<Thermometer className="w-4 h-4" />} gradient="bg-gradient-to-br from-slate-50/80 to-gray-50/80 border-slate-200/50">
+                  <SpecSection title="Sensores" icon={<Thermometer className="w-4 h-4" />} gradient="bg-gradient-to-br from-slate-50/80 to-gray-50/80 dark:from-slate-900/60 dark:to-slate-950/50 border-slate-200/50 dark:border-slate-800">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       <div>
-                        <h4 className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold mb-1">CPU</h4>
+                        <h4 className="text-[10px] uppercase tracking-widest text-neutral-500 dark:text-slate-400 font-semibold mb-1">CPU</h4>
                         <SpecRow label="Temp" value={sensors.cpu?.main != null ? `${sensors.cpu.main}°C` : null} icon={<Thermometer className="w-3 h-3" />} />
                         <SpecRow label="Máx" value={sensors.cpu?.max != null ? `${sensors.cpu.max}°C` : null} />
                       </div>
                       <div>
-                        <h4 className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold mb-1">GPU</h4>
+                        <h4 className="text-[10px] uppercase tracking-widest text-neutral-500 dark:text-slate-400 font-semibold mb-1">GPU</h4>
                         <SpecRow label="Temp" value={sensors.gpu?.temperature != null ? `${sensors.gpu.temperature}°C` : null} icon={<Thermometer className="w-3 h-3" />} />
                         {sensors.gpu?.fanSpeed != null && <SpecRow label="Ventilador" value={`${sensors.gpu.fanSpeed} RPM`} icon={<Fan className="w-3 h-3" />} />}
                         {sensors.gpu?.powerDraw != null && <SpecRow label="Consumo" value={`${sensors.gpu.powerDraw.toFixed(1)} W`} icon={<Zap className="w-3 h-3" />} />}
                       </div>
                     </div>
                     {sensors.storage?.length > 0 && (
-                      <div className="mt-3 pt-3 border-t border-slate-100">
-                        <h4 className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold mb-1">Almacenamiento</h4>
+                      <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                        <h4 className="text-[10px] uppercase tracking-widest text-neutral-500 dark:text-slate-400 font-semibold mb-1">Almacenamiento</h4>
                         {sensors.storage.map((s, i) => (
                           <SpecRow key={i} label={s.device} value={s.temperature != null ? `${s.temperature}°C` : null} />
                         ))}
                       </div>
                     )}
                     {sensors.fans?.length > 0 && (
-                      <div className="mt-3 pt-3 border-t border-slate-100">
-                        <h4 className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold mb-1">Ventiladores</h4>
+                      <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                        <h4 className="text-[10px] uppercase tracking-widest text-neutral-500 dark:text-slate-400 font-semibold mb-1">Ventiladores</h4>
                         {sensors.fans.map((f, i) => (
                           <SpecRow key={i} label={f.name} value={f.rpm != null ? `${f.rpm} RPM` : f.percentage != null ? `${f.percentage}%` : null} icon={<Fan className="w-3 h-3" />} />
                         ))}

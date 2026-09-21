@@ -21,17 +21,17 @@ export function MetricCard({ icon, label, value, subvalue, status, onClick }: Me
     <motion.div
       whileHover={{ y: -4, boxShadow: '0 12px 40px rgba(26,54,93,0.1)' }}
       onClick={onClick}
-      className="bg-white rounded-xl p-5 border border-neutral-200/60 cursor-pointer transition-all duration-200 hover:border-neutral-300"
+      className="bg-white dark:bg-slate-900/90 rounded-xl p-5 border border-neutral-200/60 dark:border-slate-800 cursor-pointer transition-all duration-200 hover:border-neutral-300 dark:hover:border-slate-700 shadow-sm"
     >
       <div className="flex items-start justify-between mb-3">
         <div className={`p-2.5 rounded-xl ${cfg.bg}`}>
           {icon}
         </div>
-        <span className={`w-2.5 h-2.5 rounded-full ${cfg.dot} ring-2 ring-white`} />
+        <span className={`w-2.5 h-2.5 rounded-full ${cfg.dot} ring-2 ring-white dark:ring-slate-900`} />
       </div>
-      <p className="text-xs text-neutral-500 font-semibold uppercase tracking-wider mb-0.5">{label}</p>
-      <p className="text-xl font-extrabold text-primary-900 truncate">{value}</p>
-      {subvalue && <p className="text-xs text-neutral-400 mt-1">{subvalue}</p>}
+      <p className="text-xs text-neutral-500 dark:text-slate-400 font-semibold uppercase tracking-wider mb-0.5">{label}</p>
+      <p className="text-xl font-extrabold text-primary-900 dark:text-white truncate">{value}</p>
+      {subvalue && <p className="text-xs text-neutral-400 dark:text-slate-400 mt-1">{subvalue}</p>}
     </motion.div>
   )
 }

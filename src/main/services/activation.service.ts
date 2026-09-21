@@ -187,18 +187,24 @@ $result | ConvertTo-Json -Compress
 }
 
 async function downloadFile(url: string, timeout = 15000): Promise<string> {
-  const https = require('https')
-  return new Promise<string>((resolve, reject) => {
-    https.get(url, { timeout }, (res: any) => {
-      if (res.statusCode !== 200) {
-        reject(new Error(`HTTP ${res.statusCode}`))
-        return
-      }
-      let data = ''
-      res.on('data', (chunk: string) => { data += chunk })
-      res.on('end', () => resolve(data))
-    }).on('error', reject)
-  })
+  const controller = new AbortController()
+  const id = setTimeout(() => controller.abort(), timeout)
+  try {
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ApexHardwareStudio/2.0',
+        'Accept': '*/*',
+      },
+      redirect: 'follow',
+    })
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`)
+    }
+    return await res.text()
+  } finally {
+    clearTimeout(id)
+  }
 }
 
 export async function downloadAndRunMAS(target: 'windows' | 'office' | 'both'): Promise<void> {

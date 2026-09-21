@@ -1,4 +1,4 @@
-# Container Diagnostic Suite — v2
+# Apex Hardware Studio — v2
 # Verifica estado de activación de Windows y licencia en detalle
 # Uso: powershell -ExecutionPolicy Bypass -File get-activation.ps1
 

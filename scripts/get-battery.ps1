@@ -1,4 +1,4 @@
-# Container Diagnostic Suite — v2
+# Apex Hardware Studio — v2
 # Obtiene información detallada de la batería con tecnología, química, fabricación
 # Uso: powershell -ExecutionPolicy Bypass -File get-battery.ps1
 

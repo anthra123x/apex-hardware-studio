@@ -73,7 +73,7 @@ if ($disk) {
   $healthMap = @{ "Healthy" = 100; "Warning" = 70; "Unhealthy" = 30 }
   $result.health = if ($healthMap.ContainsKey($result.smartStatus)) { $healthMap[$result.smartStatus] } else { $null }
 
-  $reliability = $disk | Get-PhysicalDisk | Get-StorageReliabilityCounter -ErrorAction SilentlyContinue
+  $reliability = $disk | Get-StorageReliabilityCounter -ErrorAction SilentlyContinue
   if ($reliability) {
     $result.powerOnHours = try { [int]$reliability.PowerOnHours } catch { $null }
     $result.reallocatedSectors = try { [long]$reliability.ReadErrorsUncorrected } catch { $null }
@@ -160,6 +160,9 @@ async function fetchStorageInfo(): Promise<StorageInfo[]> {
       device: disk.name || `PhysicalDrive${index}`,
       type,
       interfaceType,
+      size: disk.size || Math.round(convertBytes(disk.size || 0) * 1073741824),
+      used: matchedFs.used || 0,
+      available: matchedFs.available || 0,
       sizeGB: convertBytes(disk.size || 0),
       usedGB: convertBytes(matchedFs.used),
       availableGB: convertBytes(matchedFs.available),

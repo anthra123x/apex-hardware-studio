@@ -34,7 +34,9 @@ export async function runCPUBenchmark(progress?: (pct: number) => void): Promise
 
   const workFactor = Math.max(physCores, 2)
   const workersCount = Math.min(physCores, 16)
-  const iterationsPerWorker = Math.floor((60000000 * workFactor) / workersCount)
+  // Balanced workload: responsive even on 2-core / low-voltage mobile CPUs without overheating
+  const baseIterations = 20000000
+  const iterationsPerWorker = Math.max(1000000, Math.floor((baseIterations * workFactor) / workersCount))
 
   const workerCode = `
     const { parentPort } = require('worker_threads');
@@ -113,7 +115,7 @@ export async function runCPUBenchmark(progress?: (pct: number) => void): Promise
   const piError = Math.abs(Math.PI - piEstimate) / Math.PI * 100
   const opsPerSec = totalSamples / Math.max(elapsed, 0.01)
 
-  const rawScore = (opsPerSec / 120000000) * 5000
+  const rawScore = (opsPerSec / 40000000) * 5000
   const coreBoost = Math.min(physCores / 4, 2)
   const speedBoost = Math.min((cpu.speed || 2.5) / 2.5, 1.5)
   const score = Math.round(Math.min(10000, Math.max(0, rawScore * coreBoost * speedBoost)))
@@ -137,7 +139,10 @@ export async function runCPUBenchmark(progress?: (pct: number) => void): Promise
 export async function runMemoryBenchmark(progress?: (pct: number) => void): Promise<BenchmarkPhaseResult> {
   const mem = await si.mem()
   const totalGB = (mem.total || 4294967296) / 1073741824
-  const allocMB = Math.min(Math.floor(totalGB * 0.3), 1024)
+  const freeMB = Math.floor((mem.free || 1073741824) / 1048576)
+  // Safe bounded allocation: prevent exhausting free memory and OS paging on low-resource machines
+  const safeCap = Math.max(128, Math.min(512, Math.floor(freeMB * 0.35)))
+  const allocMB = Math.min(Math.floor(totalGB * 0.25), safeCap)
   const allocBytes = allocMB * 1024 * 1024
   const chunkSize = 64 * 1024
   const chunkCount = Math.floor(allocBytes / chunkSize)
@@ -172,7 +177,8 @@ export async function runMemoryBenchmark(progress?: (pct: number) => void): Prom
     }
 
     randIndexes = []
-    for (let r = 0; r < 500000; r++) {
+    const randomAccessCount = allocMB <= 256 ? 200000 : 400000
+    for (let r = 0; r < randomAccessCount; r++) {
       randIndexes.push(Math.floor(Math.random() * buf.length))
     }
 
@@ -186,7 +192,8 @@ export async function runMemoryBenchmark(progress?: (pct: number) => void): Prom
   progress?.(95)
   const elapsed = (performance.now() - start) / 1000
 
-  const totalBytesProcessed = (allocBytes * 3) + (allocBytes * 3) + (500000 * 3)
+  const randomAccessCount = allocMB <= 256 ? 200000 : 400000
+  const totalBytesProcessed = (allocBytes * 3) + (allocBytes * 3) + (randomAccessCount * 3)
   const processedGB = totalBytesProcessed / 1073741824
   const throughput = processedGB / Math.max(elapsed, 0.01)
 
@@ -196,13 +203,13 @@ export async function runMemoryBenchmark(progress?: (pct: number) => void): Prom
   const result: BenchmarkPhaseResult = {
     score,
     rating: rateScore(score),
-    details: `Memoria: ${totalGB.toFixed(1)} GB (${allocMB} MB probados) • ${throughput.toFixed(1)} GB/s throughput • 3 pasadas secuenciales + 3 × 500K accesos aleatorios`,
+    details: `Memoria: ${totalGB.toFixed(1)} GB (${allocMB} MB probados) • ${throughput.toFixed(1)} GB/s throughput • 3 pasadas secuenciales + ${randomAccessCount * 3} accesos aleatorios`,
     metrics: {
       'RAM total': `${totalGB.toFixed(1)} GB`,
       'Buffer': `${allocMB} MB`,
       'Throughput': `${throughput.toFixed(1)} GB/s`,
       'Pasadas secuenciales': 3,
-      'Accesos aleatorios': '3 × 500K',
+      'Accesos aleatorios': `3 × ${(randomAccessCount / 1000).toFixed(0)}K`,
       'Tiempo': `${elapsed.toFixed(1)}s`,
     },
   }
@@ -217,8 +224,8 @@ export async function runMemoryBenchmark(progress?: (pct: number) => void): Prom
 
 export async function runDiskBenchmark(progress?: (pct: number) => void): Promise<BenchmarkPhaseResult> {
   const tmpDir = app.getPath('temp')
-  const testFile = path.join(tmpDir, `cds-benchmark-${Date.now()}.tmp`)
-  const sizeMB = 200
+  const testFile = path.join(tmpDir, `apex-benchmark-${Date.now()}.tmp`)
+  const sizeMB = 100
   const buf1MB = Buffer.alloc(1024 * 1024, 0xBB)
 
   let wFd: fs.FileHandle | null = null
@@ -237,7 +244,7 @@ export async function runDiskBenchmark(progress?: (pct: number) => void): Promis
     const writeStart = performance.now()
     for (let i = 0; i < sizeMB; i++) {
       await wFd.write(buf1MB, 0, buf1MB.length)
-      if (i % 20 === 0) progress?.(3 + Math.round((i / sizeMB) * 22))
+      if (i % 10 === 0) progress?.(3 + Math.round((i / sizeMB) * 25))
     }
     await wFd.close()
     wFd = null
@@ -249,7 +256,7 @@ export async function runDiskBenchmark(progress?: (pct: number) => void): Promis
     const readStart = performance.now()
     for (let i = 0; i < sizeMB; i++) {
       await rFd.read(readBuf, 0, readBuf.length, i * 1024 * 1024)
-      if (i % 20 === 0) progress?.(30 + Math.round((i / sizeMB) * 22))
+      if (i % 10 === 0) progress?.(30 + Math.round((i / sizeMB) * 25))
     }
     await rFd.close()
     rFd = null

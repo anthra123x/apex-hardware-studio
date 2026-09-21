@@ -58,9 +58,9 @@ function ratingIcon(rating: string) {
 
 function MetricRow({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="flex items-center justify-between py-1 border-b border-neutral-100 last:border-0">
-      <span className="text-xs text-neutral-500">{label}</span>
-      <span className="text-xs font-semibold text-primary-800">{value}</span>
+    <div className="flex items-center justify-between py-1 border-b border-neutral-100 dark:border-slate-800 last:border-0">
+      <span className="text-xs text-neutral-500 dark:text-slate-400">{label}</span>
+      <span className="text-xs font-semibold text-primary-800 dark:text-slate-200">{value}</span>
     </div>
   )
 }
@@ -82,21 +82,21 @@ function PhaseCard({
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`rounded-xl p-5 border ${meta.color} ${meta.border} bg-white shadow-sm`}
+      className={`rounded-xl p-5 border ${meta.color} ${meta.border} bg-white dark:bg-slate-900 dark:border-slate-800 shadow-sm`}
     >
       <div className="flex items-center gap-3 mb-3">
-        <div className={`p-2 rounded-xl ${meta.bg}`}>
+        <div className={`p-2 rounded-xl ${meta.bg} dark:bg-slate-800`}>
           <Icon className={`w-5 h-5 ${meta.textColor}`} />
         </div>
         <div className="flex-1">
-          <h3 className="font-bold text-sm text-primary-900">{meta.label}</h3>
-          {running && <p className="text-xs text-neutral-500">{progress}%</p>}
+          <h3 className="font-bold text-sm text-primary-900 dark:text-slate-100">{meta.label}</h3>
+          {running && <p className="text-xs text-neutral-500 dark:text-slate-400">{progress}%</p>}
         </div>
         {running && <Loader2 className="w-5 h-5 text-primary-500 animate-spin" />}
       </div>
 
       {running && (
-        <div className="w-full bg-neutral-100 rounded-full h-2 mb-3 overflow-hidden">
+        <div className="w-full bg-neutral-100 dark:bg-slate-800 rounded-full h-2 mb-3 overflow-hidden">
           <motion.div
             className="h-full bg-gradient-to-r from-primary-500 to-primary-300 rounded-full"
             initial={{ width: 0 }}
@@ -109,15 +109,15 @@ function PhaseCard({
       {result && (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-extrabold text-primary-900">{result.score.toLocaleString()}</span>
+            <span className="text-2xl font-extrabold text-primary-900 dark:text-slate-100">{result.score.toLocaleString()}</span>
             <span className="text-xs text-neutral-400">pts</span>
             <span className={`ml-auto flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${ratingColor(result.rating)}`}>
               {ratingIcon(result.rating)}
               {result.rating}
             </span>
           </div>
-          <p className="text-xs text-neutral-600 leading-relaxed">{result.details}</p>
-          <div className="bg-neutral-50/80 rounded-lg p-2.5 border border-neutral-100">
+          <p className="text-xs text-neutral-600 dark:text-slate-300 leading-relaxed">{result.details}</p>
+          <div className="bg-neutral-50/80 dark:bg-slate-800/80 rounded-lg p-2.5 border border-neutral-100 dark:border-slate-700/60">
             {Object.entries(result.metrics).map(([label, value]) => (
               <MetricRow key={label} label={label} value={value} />
             ))}
@@ -186,9 +186,9 @@ export function Benchmark() {
               <Gauge className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-primary-900">Benchmark</h1>
-              <p className="text-sm text-neutral-500">
-                Prueba de estrés real con cálculos en paralelo, acceso intensivo a memoria y E/S de disco
+              <h1 className="text-2xl font-bold text-primary-900 dark:text-slate-100">Benchmark</h1>
+              <p className="text-sm text-neutral-500 dark:text-slate-400">
+                Prueba de estrés de hardware con cómputo paralelo, saturación de RAM y E/S en disco
               </p>
             </div>
           </div>
@@ -200,24 +200,24 @@ export function Benchmark() {
           animate={{ opacity: 1, y: 0 }}
         >
           {!running && !result && !error && (
-            <div className="bg-gradient-to-br from-neutral-50 to-neutral-100/50 rounded-2xl border border-neutral-200/60 p-8 text-center">
+            <div className="bg-gradient-to-br from-neutral-50 to-neutral-100/50 dark:from-slate-900 dark:to-slate-800/50 rounded-2xl border border-neutral-200/60 dark:border-slate-800 p-8 text-center">
               <div className="p-4 bg-red-500/10 rounded-2xl inline-block mb-4">
                 <Gauge className="w-10 h-10 text-red-500" />
               </div>
-              <h3 className="text-lg font-bold text-primary-800 mb-2">Prueba de Rendimiento</h3>
-              <p className="text-sm text-neutral-600 mb-4 max-w-lg mx-auto leading-relaxed">
-                Esta prueba estresa tu equipo al máximo para medir su rendimiento real.
-                <strong className="block mt-2 text-amber-700">Cierra otras aplicaciones antes de ejecutar. El proceso puede tomar 1-2 minutos.</strong>
+              <h3 className="text-lg font-bold text-primary-900 dark:text-slate-100 mb-2">Prueba de Rendimiento</h3>
+              <p className="text-sm text-neutral-600 dark:text-slate-300 mb-4 max-w-lg mx-auto leading-relaxed">
+                Esta prueba estresa los componentes principales para medir su rendimiento real.
+                <strong className="block mt-2 text-amber-700 dark:text-amber-400">Cierra otras aplicaciones antes de iniciar. El proceso toma de 1 a 2 minutos.</strong>
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
-                <div className="text-xs text-neutral-500 bg-neutral-100 px-3 py-1.5 rounded-lg border border-neutral-200">
-                  CPU: <strong>{'<='}16 hilos</strong>
+                <div className="text-xs text-neutral-600 dark:text-slate-300 bg-neutral-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-neutral-200 dark:border-slate-700">
+                  CPU: <strong>Hasta 16 hilos</strong>
                 </div>
-                <div className="text-xs text-neutral-500 bg-neutral-100 px-3 py-1.5 rounded-lg border border-neutral-200">
-                  RAM: <strong>hasta 1 GB</strong>
+                <div className="text-xs text-neutral-600 dark:text-slate-300 bg-neutral-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-neutral-200 dark:border-slate-700">
+                  RAM: <strong>Hasta 1 GB</strong>
                 </div>
-                <div className="text-xs text-neutral-500 bg-neutral-100 px-3 py-1.5 rounded-lg border border-neutral-200">
+                <div className="text-xs text-neutral-600 dark:text-slate-300 bg-neutral-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-neutral-200 dark:border-slate-700">
                   Disco: <strong>200 MB temp</strong>
                 </div>
               </div>
@@ -228,7 +228,7 @@ export function Benchmark() {
 
               <button
                 onClick={() => setShowScale(!showScale)}
-                className="flex items-center gap-1.5 mx-auto mt-4 text-xs text-neutral-400 hover:text-neutral-600 transition-colors"
+                className="flex items-center gap-1.5 mx-auto mt-4 text-xs text-neutral-400 dark:text-slate-500 hover:text-neutral-600 dark:hover:text-slate-300 transition-colors"
               >
                 <Info className="w-3.5 h-3.5" />
                 {showScale ? 'Ocultar' : 'Ver'} escala de puntuación
@@ -238,18 +238,18 @@ export function Benchmark() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
-                  className="mt-4 bg-white rounded-xl border border-neutral-200 p-4 text-left max-w-md mx-auto"
+                  className="mt-4 bg-white dark:bg-slate-800 rounded-xl border border-neutral-200 dark:border-slate-700 p-4 text-left max-w-md mx-auto"
                 >
-                  <h4 className="text-xs font-bold text-primary-800 uppercase tracking-wider mb-2">Escala de referencia</h4>
+                  <h4 className="text-xs font-bold text-primary-900 dark:text-slate-200 uppercase tracking-wider mb-2">Escala de referencia</h4>
                   <div className="space-y-1.5">
                     {SCALE_INFO.map(s => {
                       const [color] = ratingColor(s.label).split(' ')
                       return (
                         <div key={s.label} className="flex items-center gap-2 text-xs">
                           <span className={`w-2 h-2 rounded-full ${color}`} />
-                          <span className="font-mono text-neutral-500 w-24">{s.range}</span>
-                          <span className="font-semibold text-primary-800 w-16">{s.label}</span>
-                          <span className="text-neutral-400">{s.desc}</span>
+                          <span className="font-mono text-neutral-500 dark:text-slate-400 w-24">{s.range}</span>
+                          <span className="font-semibold text-primary-800 dark:text-slate-200 w-16">{s.label}</span>
+                          <span className="text-neutral-400 dark:text-slate-400">{s.desc}</span>
                         </div>
                       )
                     })}

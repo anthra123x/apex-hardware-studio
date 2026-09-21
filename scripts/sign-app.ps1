@@ -1,4 +1,4 @@
-# Container Diagnostic Suite
+# Apex Hardware Studio
 # Script de preparación para firma digital del ejecutable
 # 
 # REQUISITOS:
@@ -22,7 +22,7 @@ param(
   [string]$TimestampServer = "http://timestamp.digicert.com",
 
   [Parameter(Mandatory = $false)]
-  [string]$AppPath = "..\dist\win-unpacked\Container Diagnostic Suite.exe"
+  [string]$AppPath = "..\dist\win-unpacked\Apex Hardware Studio.exe"
 )
 
 # Buscar signtool.exe
@@ -46,7 +46,7 @@ if (-not $signtool) {
   exit 1
 }
 
-Write-Host "=== Firma Digital - Container Diagnostic Suite ===" -ForegroundColor Cyan
+Write-Host "=== Firma Digital - Apex Hardware Studio ===" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Herramienta: $signtool"
 Write-Host "Certificado: $CertificatePath"

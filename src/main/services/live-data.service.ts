@@ -49,8 +49,8 @@ async function fetchLiveMetrics(): Promise<LiveMetrics> {
       withTimeout(si.currentLoad(), SI_TIMEOUT, 'currentLoad'),
       withTimeout(si.mem(), SI_TIMEOUT, 'mem'),
       withTimeout(si.cpuTemperature(), SI_TIMEOUT, 'cpuTemperature'),
-      withTimeout(si.cpu(), SI_TIMEOUT, 'cpu'),
-      withTimeout(si.fsSize(), SI_TIMEOUT, 'fsSize'),
+      cached('si:cpu:static', 3600000, () => withTimeout(si.cpu(), SI_TIMEOUT, 'cpu')),
+      cached('si:fsSize:live', 30000, () => withTimeout(si.fsSize(), SI_TIMEOUT, 'fsSize')),
       getBatteryInfo(),
       Promise.resolve(si.time()),
     ])

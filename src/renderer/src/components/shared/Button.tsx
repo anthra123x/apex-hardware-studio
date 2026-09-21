@@ -15,11 +15,11 @@ interface ButtonProps {
 }
 
 const variants = {
-  primary: 'bg-primary-500 hover:bg-primary-600 text-white shadow-sm',
-  secondary: 'bg-neutral-100 hover:bg-neutral-200 text-primary-800',
-  danger: 'bg-danger hover:bg-red-700 text-white shadow-sm',
-  ghost: 'hover:bg-neutral-100 text-primary-700',
-  outline: 'border-2 border-primary-500 text-primary-500 hover:bg-primary-50',
+  primary: 'bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-900/20 active:bg-blue-700',
+  secondary: 'bg-neutral-100 hover:bg-neutral-200 text-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 border border-transparent dark:border-slate-700',
+  danger: 'bg-red-600 hover:bg-red-500 text-white shadow-sm active:bg-red-700',
+  ghost: 'hover:bg-neutral-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300',
+  outline: 'border border-blue-500 text-blue-600 dark:text-cyan-400 dark:border-cyan-500/40 hover:bg-blue-50 dark:hover:bg-cyan-950/30',
 }
 
 const sizes = {

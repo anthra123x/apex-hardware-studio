@@ -99,6 +99,9 @@ export interface StorageInfo {
   size: number
   used: number
   available: number
+  sizeGB?: number
+  usedGB?: number
+  availableGB?: number
   usagePercent: number
   smartStatus: string
   temperature: number | null

@@ -1,9 +1,9 @@
 {
-  "name": "container-diagnostic-suite",
-  "version": "1.5.2",
-  "description": "Container Diagnostic Suite - Professional hardware diagnostic tool",
+  "name": "apex-hardware-studio",
+  "version": "2.0.0",
+  "description": "Apex Hardware Studio - Professional hardware diagnostic, benchmark and maintenance suite",
   "main": "./out/main/index.js",
-  "author": "Container",
+  "author": "Apex Studio",
   "license": "MIT",
   "scripts": {
     "dev": "electron-vite dev",

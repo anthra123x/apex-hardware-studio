@@ -25,11 +25,11 @@ import type { DriverInfo, DriverUpdate, DriverScanResult, DriverInstallProgress 
 
 function SummaryCard({ icon, label, value, color }: { icon: React.ReactNode; label: string; value: string | number; color: string }) {
   return (
-    <div className="bg-white rounded-xl border border-neutral-200/60 p-4 flex items-center gap-3 shadow-sm">
+    <div className="bg-white dark:bg-slate-900 rounded-xl border border-neutral-200/60 dark:border-slate-800 p-4 flex items-center gap-3 shadow-sm">
       <div className={`p-2.5 rounded-xl ${color}`}>{icon}</div>
       <div>
-        <p className="text-2xl font-extrabold text-primary-900">{value}</p>
-        <p className="text-xs text-neutral-500 font-medium">{label}</p>
+        <p className="text-2xl font-extrabold text-primary-900 dark:text-slate-100">{value}</p>
+        <p className="text-xs text-neutral-500 dark:text-slate-400 font-medium">{label}</p>
       </div>
     </div>
   )
@@ -37,15 +37,15 @@ function SummaryCard({ icon, label, value, color }: { icon: React.ReactNode; lab
 
 function ProblematicCard({ driver }: { driver: DriverInfo }) {
   return (
-    <div className="bg-danger/5 border border-danger/10 rounded-xl p-4">
+    <div className="bg-danger/5 dark:bg-danger/10 border border-danger/10 dark:border-danger/20 rounded-xl p-4">
       <div className="flex items-start gap-3">
-        <div className="p-2 rounded-lg bg-danger/10 shrink-0">
+        <div className="p-2 rounded-lg bg-danger/10 dark:bg-danger/20 shrink-0">
           <AlertTriangle className="w-4 h-4 text-danger" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-bold text-primary-900 truncate">{driver.deviceName}</p>
+          <p className="text-sm font-bold text-primary-900 dark:text-slate-100 truncate">{driver.deviceName}</p>
           <p className="text-xs text-danger font-medium mt-0.5">{driver.errorDescription}</p>
-          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-[11px] text-neutral-500">
+          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-[11px] text-neutral-500 dark:text-slate-400">
             <span>Proveedor: {driver.driverProvider || '—'}</span>
             <span>Versión: {driver.driverVersion || '—'}</span>
             {driver.hardwareId && <span className="truncate max-w-[200px]">HWID: {driver.hardwareId}</span>}
@@ -66,12 +66,12 @@ function ProgressModal({ progress, onClose }: { progress: DriverInstallProgress 
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl"
+        className="bg-white dark:bg-slate-900 border border-neutral-200/60 dark:border-slate-800 rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl"
       >
         <div className="text-center mb-4">
           {isError ? (
@@ -83,21 +83,21 @@ function ProgressModal({ progress, onClose }: { progress: DriverInstallProgress 
               <CheckCircle className="w-7 h-7 text-success" />
             </div>
           ) : (
-            <div className="w-14 h-14 mx-auto rounded-full bg-primary-50 flex items-center justify-center mb-3">
+            <div className="w-14 h-14 mx-auto rounded-full bg-primary-50 dark:bg-primary-950/50 flex items-center justify-center mb-3">
               <Loader2 className="w-7 h-7 text-primary-500 animate-spin" />
             </div>
           )}
 
-          <h3 className="text-lg font-bold text-primary-900 mb-1">
+          <h3 className="text-lg font-bold text-primary-900 dark:text-slate-100 mb-1">
             {isError ? 'Error' : isComplete ? 'Completado' : 'Instalando...'}
           </h3>
-          <p className="text-sm text-neutral-500">{progress.message}</p>
+          <p className="text-sm text-neutral-500 dark:text-slate-400">{progress.message}</p>
           {progress.currentUpdate && !isError && !isComplete && (
-            <p className="text-xs text-neutral-400 mt-1 truncate">{progress.currentUpdate}</p>
+            <p className="text-xs text-neutral-400 dark:text-slate-500 mt-1 truncate">{progress.currentUpdate}</p>
           )}
         </div>
 
-        <div className="w-full h-2 bg-neutral-100 rounded-full overflow-hidden mb-4">
+        <div className="w-full h-2 bg-neutral-100 dark:bg-slate-800 rounded-full overflow-hidden mb-4">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${progress.progress}%` }}
@@ -107,7 +107,7 @@ function ProgressModal({ progress, onClose }: { progress: DriverInstallProgress 
         </div>
 
         {isComplete && progress.needsReboot && (
-          <div className="bg-warning/5 border border-warning/10 rounded-xl p-3 mb-4">
+          <div className="bg-warning/5 dark:bg-warning/10 border border-warning/10 dark:border-warning/20 rounded-xl p-3 mb-4">
             <p className="text-xs text-warning font-medium text-center">
               Se requiere reiniciar el sistema para completar la instalación.
             </p>
@@ -258,8 +258,8 @@ export function Drivers() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-6"
       >
-        <h1 className="text-xl font-extrabold text-primary-900 mb-1">Drivers del Sistema</h1>
-        <p className="text-sm text-neutral-500">
+        <h1 className="text-xl font-extrabold text-primary-900 dark:text-slate-100 mb-1">Drivers del Sistema</h1>
+        <p className="text-sm text-neutral-500 dark:text-slate-400">
           Escanee, verifique y actualice los controladores de su sistema.
         </p>
       </motion.div>
@@ -267,28 +267,28 @@ export function Drivers() {
       {/* Summary cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
         <SummaryCard
-          icon={<HardDrive className="w-5 h-5 text-primary-600" />}
+          icon={<HardDrive className="w-5 h-5 text-primary-600 dark:text-primary-400" />}
           label="Controladores"
           value={scanResult?.totalCount ?? '—'}
-          color="bg-primary-50"
+          color="bg-primary-50 dark:bg-primary-950/50"
         />
         <SummaryCard
           icon={<AlertTriangle className="w-5 h-5 text-danger" />}
           label="Con errores"
           value={problematics.length}
-          color="bg-danger/5"
+          color="bg-danger/5 dark:bg-danger/10"
         />
         <SummaryCard
           icon={<Download className="w-5 h-5 text-warning" />}
           label="Actualizaciones"
           value={updateCount}
-          color="bg-warning/5"
+          color="bg-warning/5 dark:bg-warning/10"
         />
         <SummaryCard
-          icon={<RefreshCw className="w-5 h-5 text-neutral-500" />}
+          icon={<RefreshCw className="w-5 h-5 text-neutral-500 dark:text-slate-400" />}
           label="Último escaneo"
           value={lastScan || '—'}
-          color="bg-neutral-100"
+          color="bg-neutral-100 dark:bg-slate-800"
         />
       </div>
 
@@ -321,7 +321,7 @@ export function Drivers() {
       </div>
 
       {scanError && (
-        <div className="bg-danger/5 border border-danger/10 rounded-xl p-4 mb-5 flex items-start gap-3">
+        <div className="bg-danger/5 dark:bg-danger/10 border border-danger/10 dark:border-danger/20 rounded-xl p-4 mb-5 flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-danger shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-bold text-danger">Error al escanear</p>
@@ -331,7 +331,7 @@ export function Drivers() {
       )}
 
       {updatesError && (
-        <div className="bg-warning/5 border border-warning/10 rounded-xl p-4 mb-5 flex items-start gap-3">
+        <div className="bg-warning/5 dark:bg-warning/10 border border-warning/10 dark:border-warning/20 rounded-xl p-4 mb-5 flex items-start gap-3">
           <Info className="w-5 h-5 text-warning shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-bold text-warning">Aviso de actualizaciones</p>
@@ -353,7 +353,7 @@ export function Drivers() {
           >
             <div className="flex items-center gap-2 flex-1">
               <AlertTriangle className="w-4 h-4 text-danger" />
-              <h2 className="text-sm font-extrabold text-primary-900">
+              <h2 className="text-sm font-extrabold text-primary-900 dark:text-slate-100">
                 {problematics.length} controlador{problematics.length !== 1 ? 'es' : ''} con problemas
               </h2>
             </div>
@@ -381,26 +381,26 @@ export function Drivers() {
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl border border-neutral-200/60 overflow-hidden shadow-sm"
+          className="bg-white dark:bg-slate-900 rounded-xl border border-neutral-200/60 dark:border-slate-800 overflow-hidden shadow-sm"
         >
           {/* Search & filters */}
-          <div className="p-4 border-b border-neutral-100 flex flex-wrap items-center gap-3">
+          <div className="p-4 border-b border-neutral-100 dark:border-slate-800 flex flex-wrap items-center gap-3">
             <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 dark:text-slate-500" />
               <input
                 type="text"
                 placeholder="Buscar controlador..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-sm border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-neutral-50"
+                className="w-full pl-9 pr-3 py-2 text-sm border border-neutral-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 bg-neutral-50 dark:bg-slate-800 text-neutral-800 dark:text-slate-100"
               />
             </div>
             <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-neutral-400" />
+              <Filter className="w-4 h-4 text-neutral-400 dark:text-slate-500" />
               <select
                 value={filter}
                 onChange={e => setFilter(e.target.value as FilterType)}
-                className="text-sm border border-neutral-200 rounded-lg px-3 py-2 bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
+                className="text-sm border border-neutral-200 dark:border-slate-700 rounded-lg px-3 py-2 bg-neutral-50 dark:bg-slate-800 text-neutral-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
               >
                 <option value="all">Todos</option>
                 <option value="problematic">Con errores</option>
@@ -411,7 +411,7 @@ export function Drivers() {
           </div>
 
           {/* Table header */}
-          <div className="hidden md:grid grid-cols-12 gap-3 px-4 py-2.5 bg-neutral-50 text-[11px] font-bold text-neutral-500 uppercase tracking-wider border-b border-neutral-100">
+          <div className="hidden md:grid grid-cols-12 gap-3 px-4 py-2.5 bg-neutral-50 dark:bg-slate-800/60 text-[11px] font-bold text-neutral-500 dark:text-slate-400 uppercase tracking-wider border-b border-neutral-100 dark:border-slate-800">
             <button className="col-span-4 flex items-center gap-1 text-left" onClick={() => toggleSort('deviceName')}>
               Dispositivo {sortKey === 'deviceName' && (sortAsc ? '▲' : '▼')}
             </button>
@@ -429,9 +429,9 @@ export function Drivers() {
           </div>
 
           {/* Table rows */}
-          <div className="divide-y divide-neutral-100">
+          <div className="divide-y divide-neutral-100 dark:divide-slate-800">
             {filteredDrivers.length === 0 ? (
-              <div className="p-8 text-center text-sm text-neutral-400">
+              <div className="p-8 text-center text-sm text-neutral-400 dark:text-slate-500">
                 {search || filter !== 'all'
                   ? 'No se encontraron controladores con ese filtro.'
                   : 'Presione "Escanear controladores" para comenzar.'}
@@ -440,22 +440,22 @@ export function Drivers() {
               filteredDrivers.map((driver, i) => (
                 <div
                   key={`${driver.hardwareId || i}-${i}`}
-                  className="grid grid-cols-1 md:grid-cols-12 gap-1 md:gap-3 px-4 py-3 hover:bg-neutral-50 transition-colors"
+                  className="grid grid-cols-1 md:grid-cols-12 gap-1 md:gap-3 px-4 py-3 hover:bg-neutral-50 dark:hover:bg-slate-800/50 transition-colors"
                 >
                   <div className="md:col-span-4">
-                    <p className="text-sm font-bold text-primary-900 truncate">{driver.deviceName}</p>
-                    <p className="text-[11px] text-neutral-400 md:hidden mt-0.5">
+                    <p className="text-sm font-bold text-primary-900 dark:text-slate-100 truncate">{driver.deviceName}</p>
+                    <p className="text-[11px] text-neutral-400 dark:text-slate-500 md:hidden mt-0.5">
                       {driver.driverProvider} · {driver.driverVersion}
                     </p>
                   </div>
                   <div className="hidden md:block md:col-span-2">
-                    <p className="text-sm text-neutral-600 truncate">{driver.driverProvider || '—'}</p>
+                    <p className="text-sm text-neutral-600 dark:text-slate-300 truncate">{driver.driverProvider || '—'}</p>
                   </div>
                   <div className="hidden md:block md:col-span-2">
-                    <p className="text-sm text-neutral-600 truncate">{driver.driverVersion || '—'}</p>
+                    <p className="text-sm text-neutral-600 dark:text-slate-300 truncate">{driver.driverVersion || '—'}</p>
                   </div>
                   <div className="hidden md:block md:col-span-2">
-                    <p className="text-sm text-neutral-600">{driver.driverDate || '—'}</p>
+                    <p className="text-sm text-neutral-600 dark:text-slate-300">{driver.driverDate || '—'}</p>
                   </div>
                   <div className="hidden md:flex md:col-span-1 items-center justify-center">
                     {driver.isSigned
@@ -476,7 +476,7 @@ export function Drivers() {
                   </div>
 
                   {/* Mobile status row */}
-                  <div className="flex md:hidden items-center gap-3 text-xs text-neutral-500 mt-1">
+                  <div className="flex md:hidden items-center gap-3 text-xs text-neutral-500 dark:text-slate-400 mt-1">
                     <span className={`inline-flex items-center gap-1 ${driver.isSigned ? 'text-success' : 'text-danger'}`}>
                       {driver.isSigned ? <ShieldCheck className="w-3 h-3" /> : <ShieldX className="w-3 h-3" />}
                       {driver.isSigned ? 'Firmado' : 'No firmado'}
@@ -492,7 +492,7 @@ export function Drivers() {
           </div>
 
           {/* Footer */}
-          <div className="px-4 py-2.5 border-t border-neutral-100 text-[11px] text-neutral-400">
+          <div className="px-4 py-2.5 border-t border-neutral-100 dark:border-slate-800 text-[11px] text-neutral-400 dark:text-slate-500">
             Mostrando {filteredDrivers.length} de {scanResult.totalCount} controladores
           </div>
         </motion.div>
@@ -503,29 +503,29 @@ export function Drivers() {
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-5 bg-white rounded-xl border border-neutral-200/60 overflow-hidden shadow-sm"
+          className="mt-5 bg-white dark:bg-slate-900 rounded-xl border border-neutral-200/60 dark:border-slate-800 overflow-hidden shadow-sm"
         >
-          <div className="p-4 border-b border-neutral-100">
+          <div className="p-4 border-b border-neutral-100 dark:border-slate-800">
             <div className="flex items-center gap-2">
               <Download className="w-4 h-4 text-warning" />
-              <h2 className="text-sm font-extrabold text-primary-900">
+              <h2 className="text-sm font-extrabold text-primary-900 dark:text-slate-100">
                 {updateCount} actualización{updateCount !== 1 ? 'es' : ''} disponible{updateCount !== 1 ? 's' : ''}
               </h2>
             </div>
           </div>
-          <div className="divide-y divide-neutral-100">
+          <div className="divide-y divide-neutral-100 dark:divide-slate-800">
             {updates.map((update, i) => (
-              <div key={i} className="p-4 hover:bg-neutral-50 transition-colors">
+              <div key={i} className="p-4 hover:bg-neutral-50 dark:hover:bg-slate-800/50 transition-colors">
                 <div className="flex items-start gap-3">
                   <div className="p-1.5 rounded-lg bg-warning/5 shrink-0">
                     <Download className="w-3.5 h-3.5 text-warning" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-bold text-primary-900">{update.title}</p>
+                    <p className="text-sm font-bold text-primary-900 dark:text-slate-100">{update.title}</p>
                     {update.description && (
-                      <p className="text-xs text-neutral-500 mt-0.5 line-clamp-2">{update.description}</p>
+                      <p className="text-xs text-neutral-500 dark:text-slate-400 mt-0.5 line-clamp-2">{update.description}</p>
                     )}
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-[11px] text-neutral-400">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-[11px] text-neutral-400 dark:text-slate-500">
                       {update.driverVersion && <span>Versión: {update.driverVersion}</span>}
                       {update.kbArticle && <span>KB: {update.kbArticle}</span>}
                       {update.categories.length > 0 && <span>{update.categories.join(', ')}</span>}
@@ -543,12 +543,12 @@ export function Drivers() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mt-5 p-4 bg-neutral-50 rounded-xl border border-neutral-200/60"
+          className="mt-5 p-4 bg-neutral-50 dark:bg-slate-900/60 rounded-xl border border-neutral-200/60 dark:border-slate-800"
         >
           <div className="flex items-start gap-2.5">
             <Info className="w-4 h-4 text-neutral-400 shrink-0 mt-0.5" />
-            <div className="text-xs text-neutral-500 leading-relaxed">
-              <p className="font-medium text-neutral-600 mb-1">Notas:</p>
+            <div className="text-xs text-neutral-500 dark:text-slate-400 leading-relaxed">
+              <p className="font-medium text-neutral-600 dark:text-slate-300 mb-1">Notas:</p>
               <ul className="list-disc pl-4 space-y-1">
                 <li>El escaneo de controladores no requiere permisos de administrador.</li>
                 <li>La búsqueda de actualizaciones usa Windows Update y puede tomar varios segundos.</li>

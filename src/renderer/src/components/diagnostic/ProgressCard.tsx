@@ -55,18 +55,18 @@ export function ProgressCard({ phase, index }: ProgressCardProps) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06, duration: 0.2 }}
-      className={`bg-white rounded-xl border shadow-sm ${borderColor[phase.status]} transition-all duration-200`}
+      className={`bg-white dark:bg-slate-900/90 rounded-xl border shadow-sm ${borderColor[phase.status]} dark:border-slate-800 transition-all duration-200`}
     >
       <button
         onClick={() => setExpanded(!expanded)}
-        className={`w-full flex items-center gap-4 p-4 transition-colors ${bgColor[phase.status]}`}
+        className={`w-full flex items-center gap-4 p-4 transition-colors ${bgColor[phase.status]} dark:hover:bg-slate-800/40`}
       >
         <div className="flex-shrink-0">{statusIcon[phase.status]}</div>
         <div className="flex-1 text-left min-w-0">
-          <p className={`font-bold text-sm ${isDone && phase.status !== 'PASS' ? '' : 'text-primary-900'}`}>
+          <p className={`font-bold text-sm ${isDone && phase.status !== 'PASS' ? '' : 'text-primary-900 dark:text-white'}`}>
             {phase.label}
           </p>
-          <p className="text-xs text-neutral-500 mt-0.5">{phase.description}</p>
+          <p className="text-xs text-neutral-500 dark:text-slate-400 mt-0.5">{phase.description}</p>
           {hasIssues && (
             <div className="mt-1.5 space-y-0.5">
               {observations.slice(0, 2).map((obs, i) => (
