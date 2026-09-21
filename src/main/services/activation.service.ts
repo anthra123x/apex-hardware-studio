@@ -250,13 +250,13 @@ export async function downloadAndRunMAS(target: 'windows' | 'office' | 'both'): 
   }
 
   const argsMap: Record<string, string> = {
-    windows: '/windows',
-    office: '/office',
-    both: '',
+    windows: '/HWID',
+    office: '/Ohook',
+    both: '/HWID',
   }
 
-  const arg = argsMap[target]
-  const masArgs = arg ? `-el -qedit ${arg}` : '-el -qedit'
+  const arg = argsMap[target] || '/HWID'
+  const masArgs = `-el -qedit ${arg}`
   const escapedPath = filePath.replace(/\\/g, '\\\\')
   const psScript = `
 try {

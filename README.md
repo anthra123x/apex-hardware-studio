@@ -24,7 +24,7 @@ Apex Hardware Studio se distribuye como una aplicación **100% portable y autón
 | **Oficial (Releases)** | **v2.0.0** | `ApexHardwareStudio-Portable-2.0.0.exe` | Windows 10 / 11 (64-bit) |
 
 ### 🚀 Puesta en Marcha Inmediata:
-1. Descarga la versión oficial más reciente desde [**GitHub Releases**](https://github.com/anthra123x/container-tester/releases/latest).
+1. Descarga la versión oficial más reciente desde [**GitHub Releases**](https://github.com/anthra123x/apex-hardware-studio/releases/latest).
 2. Guarda el archivo en tu disco local o directamente en una unidad **USB de diagnóstico**.
 3. Haz clic derecho sobre el ejecutable y selecciona **"Ejecutar como administrador"** *(necesario para permitir acceso completo a las consultas WMI/CIM, contadores SMART de almacenamiento y herramientas de reparación SFC/DISM)*.
 4. La aplicación iniciará instantáneamente con todos sus módulos listos para auditar el equipo.
@@ -109,8 +109,8 @@ Si deseas compilar la aplicación desde el código fuente:
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/anthra123x/container-tester.git
-cd container-tester
+git clone https://github.com/anthra123x/apex-hardware-studio.git
+cd apex-hardware-studio
 
 # 2. Instalar dependencias
 npm install

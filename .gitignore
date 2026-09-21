@@ -1,9 +1,10 @@
 node_modules/
 out/
 dist/win-unpacked/
-dist/CDS-*.exe
-dist/container-diagnostic-suite-*.7z
-dist/builder-debug.yml
+dist/*.exe
+dist/*.7z
+dist/builder-*.yaml
+dist/builder-*.yml
 *.log
 .DS_Store
 Thumbs.db
